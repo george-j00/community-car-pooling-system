@@ -7,74 +7,75 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-  FormControl
+  FormControl,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { registerFormSchema } from "@/lib/validator";
 import { z } from "zod";
+import { loginFormSchema, registerFormSchema } from "@/lib/validator";
 
-type FormFields  = {
+type FormFields = {
   name: "username" | "email" | "password";
   label: string;
 };
 
-type InititalValues = {
-  username: string;
+type InitialValues = {
+  username?: string;
   email: string;
   password: string;
 };
 
 type AuthFormProps = {
   formFields: FormFields[];
-  inititalValues: InititalValues;
+  initialValues: InitialValues;
   type: "Register" | "Login";
 };
 
-const AuthForm = ({ formFields, inititalValues, type } : AuthFormProps) => {
- 
-    const form = useForm<z.infer<typeof registerFormSchema>>({
-        resolver: zodResolver(registerFormSchema),
-        defaultValues: inititalValues,
-      });
+const AuthForm = ({ formFields, initialValues, type }: AuthFormProps) => {
+  const form = useForm({
+    resolver: zodResolver(
+      type === "Register" ? registerFormSchema : loginFormSchema
+    ),
+    defaultValues: initialValues,
+  });
+  const formSchema = type === "Register" ? registerFormSchema : loginFormSchema;
 
-  const onSubmit = () => {
+  const onSubmit2 = (values: z.infer<typeof formSchema>) => {
     console.log("Form submitted:");
     if (type === "Register") {
-      console.log("this is register");
+      console.log("this is register", values);
     }
     if (type === "Login") {
-      console.log("this is login");
+      console.log("this is login", values);
     }
   };
 
   return (
-
-<Form {...form} >
-    <form 
-    onSubmit={form.handleSubmit(onSubmit)}
-    className="p-10 bg-gray-50 flex flex-col md:w-1/4 w-2/3 gap-2"
-    >
-      {formFields.map((item) => (
-        <div key={item.name} className="">
-          <FormField
-            control={form.control}
-            name={item.name}
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <FormLabel>{item.label}</FormLabel>
-                <FormControl>
-                <Input placeholder={item.label} {...field} className="" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-      ))}
-      <Button type="submit" className="w-full mt-10">
-        {type === "Register" ? "Register" : "Login"}
-      </Button>
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit2)}
+        className="p-10 bg-gray-50 flex flex-col md:w-1/4 w-2/3 gap-2"
+      >
+        {formFields.map((item) => (
+          <div key={item.name} className="">
+            <FormField
+              control={form.control}
+              name={item.name}
+              render={({ field }) => (
+                <FormItem className="w-full">
+                  <FormLabel>{item.label}</FormLabel>
+                  <FormControl>
+                    <Input placeholder={item.label} {...field} className="" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+        ))}
+        <Button type="submit" className="w-full mt-10">
+          {type === "Register" ? "Register" : "Login"}
+        </Button>
       </form>
     </Form>
   );

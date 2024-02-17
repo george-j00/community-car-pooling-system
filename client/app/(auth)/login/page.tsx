@@ -1,14 +1,9 @@
 "use client";
-
 import AuthForm from "@/components/shared/AuthForm";
 import { IRegisterFormFields } from "@/types/IFormFields";
 
 const Register = () => {
-  const registerFields: IRegisterFormFields[] = [
-    {
-      name: "username",
-      label: "Username",
-    },
+  const loginFields: IRegisterFormFields[] = [
     {
       name: "email",
       label: "Email",
@@ -22,13 +17,12 @@ const Register = () => {
   return (
     <>
       <AuthForm
-        formFields={registerFields}
+        formFields={loginFields}
         initialValues={{
-          username: "",
           email: "",
           password: "",
         }}
-        type="Register"
+        type="Login"
       />
     </>
   );
