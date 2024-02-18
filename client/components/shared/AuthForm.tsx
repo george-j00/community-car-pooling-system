@@ -40,7 +40,7 @@ const AuthForm = ({ formFields, initialValues, type }: AuthFormProps) => {
   });
   const formSchema = type === "Register" ? registerFormSchema : loginFormSchema;
 
-  const onSubmit2 = (values: z.infer<typeof formSchema>) => {
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
     console.log("Form submitted:");
     if (type === "Register") {
       console.log("this is register", values);
@@ -53,7 +53,7 @@ const AuthForm = ({ formFields, initialValues, type }: AuthFormProps) => {
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(onSubmit2)}
+        onSubmit={form.handleSubmit(onSubmit)}
         className="p-10 bg-gray-50 flex flex-col md:w-1/4 w-2/3 gap-2"
       >
         {formFields.map((item) => (
