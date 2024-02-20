@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -13,6 +15,10 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { z } from "zod";
 import { loginFormSchema, registerFormSchema } from "@/lib/validator";
+import { userRegistration } from "@/lib/actions/auth.action";
+import { useRouter } from "next/navigation";
+
+
 
 type FormFields = {
   name: "username" | "email" | "password";
@@ -32,6 +38,9 @@ type AuthFormProps = {
 };
 
 const AuthForm = ({ formFields, initialValues, type }: AuthFormProps) => {
+
+const router = useRouter();
+
   const form = useForm({
     resolver: zodResolver(
       type === "Register" ? registerFormSchema : loginFormSchema
@@ -44,6 +53,12 @@ const AuthForm = ({ formFields, initialValues, type }: AuthFormProps) => {
     console.log("Form submitted:");
     if (type === "Register") {
       console.log("this is register", values);
+      
+    //  const registerResult =  userRegistration(values);
+    router.push(`/register/otp`)
+     userRegistration(values);
+    //  console.log('this is registration result ',registerResult);
+     
     }
     if (type === "Login") {
       console.log("this is login", values);
