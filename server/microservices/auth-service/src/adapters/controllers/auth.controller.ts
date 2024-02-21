@@ -47,4 +47,25 @@ export class AuthController {
    }
   }
 
+  login_user = async (req: Request, res: Response) => {
+    try {
+      const {email ,password} = req.body;
+
+      const saltRounds = 10;
+      const loginResponse = await this.authUsecase.login(email, password);
+
+    if (loginResponse !== null) {
+      res.status(200).json({ token: loginResponse });
+    } else {
+      res.status(401).json({ error: "Login failed" });
+      console.log("Login failed for user:", email);
+    }
+
+    } catch (error) {
+      res.status(500).send("Error while adding User");
+      console.log("Error while adding => ", error);
+    }
+  };
+
+
 }

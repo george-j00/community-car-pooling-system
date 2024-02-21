@@ -14,7 +14,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import { z } from "zod";
 import { loginFormSchema, registerFormSchema } from "@/lib/validator";
-import { userRegistration } from "@/lib/actions/auth.action";
+import { userLogin, userRegistration } from "@/lib/actions/auth.action";
 
 const RegisterForm = ({
   formFields,
@@ -31,7 +31,7 @@ const RegisterForm = ({
   });
 
   const formSchema = type === "Register" ? registerFormSchema : loginFormSchema;
-  
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     console.log("Form submitted:");
     if (type === "Register") {
@@ -41,6 +41,11 @@ const RegisterForm = ({
         setIsOtpAvail(true);
         setEmail(response);
       }
+    }
+
+    if (type === "Login") {
+        console.log("this is login values ", values);
+      const response = await userLogin(values);
     }
   };
 

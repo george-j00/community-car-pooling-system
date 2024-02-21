@@ -3,12 +3,17 @@ import { AuthController } from "../controllers/auth.controller";
 import { AuthUsecase } from "../../usecases/auth.usecase";
 import { AuthRepository } from "../repositories/auth.repository";
 import { AuthModel } from "../../models/auth.model";
+import { RabbitMQService } from "../../frameworks/messageBroker/rabbitmq";
+import { JwtService } from "../../frameworks/jwt/jwt";
 
 export class AuthRouter {
-  router = Router();
 
-  authRepository = new AuthRepository(AuthModel);
-  authUsecase = new AuthUsecase(this.authRepository);
+  secret_key = "secret_key";
+  jwt = new JwtService(this.secret_key)
+  router = Router();
+  rabbitMq = new RabbitMQService();
+  authRepository = new AuthRepository(AuthModel,this.rabbitMq);
+  authUsecase = new AuthUsecase(this.authRepository ,this.rabbitMq , this.jwt);
   authController = new AuthController(this.authUsecase);
 
   constructor() {
@@ -17,6 +22,9 @@ export class AuthRouter {
     });
     this.router.post("/api/auth/register/send-otp", (req: Request, res: Response) => {
       this.authController.validateOtp(req, res);
+    });
+    this.router.post("/api/auth/login", (req: Request, res: Response) => {
+      this.authController.login_user(req, res);
     });
   }
 }

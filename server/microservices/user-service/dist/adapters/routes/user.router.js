@@ -35,7 +35,7 @@ class UserRouter {
     rabbitMq() {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.consumerMessage.consumeMessages();
-            // await this.consumerMessage.loginCommunications();
+            yield this.consumerMessage.loginCommunications();
         });
     }
 }

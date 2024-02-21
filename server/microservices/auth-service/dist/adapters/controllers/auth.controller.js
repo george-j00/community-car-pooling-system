@@ -19,6 +19,24 @@ const nodemailer_1 = require("../../frameworks/nodemailer/nodemailer");
 class AuthController {
     constructor(authUsecase) {
         this.authUsecase = authUsecase;
+        this.login_user = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { email, password } = req.body;
+                const saltRounds = 10;
+                const loginResponse = yield this.authUsecase.login(email, password);
+                if (loginResponse !== null) {
+                    res.status(200).json({ token: loginResponse });
+                }
+                else {
+                    res.status(401).json({ error: "Login failed" });
+                    console.log("Login failed for user:", email);
+                }
+            }
+            catch (error) {
+                res.status(500).send("Error while adding User");
+                console.log("Error while adding => ", error);
+            }
+        });
     }
     register_user(req, res) {
         return __awaiter(this, void 0, void 0, function* () {

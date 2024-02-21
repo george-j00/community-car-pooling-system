@@ -2,7 +2,7 @@ import { Model } from "mongoose";
 import { IUserSchema } from "../../interfaces/IUserSchema";
 import { IUserCase } from "../../interfaces/IUserUsecase";
 import { UserEntity } from "../../entity/user.entity";
-
+import bcrypt from "bcryptjs";
 
 export class UserRepository implements IUserCase {
   private readonly UserModel: Model<IUserSchema>;
@@ -27,13 +27,17 @@ export class UserRepository implements IUserCase {
     try {
       const user = await this.UserModel.findOne({ email: email }).exec();
 
-      if (user && user.password === password) {
+      console.log('this is user ',user?.password , password);
+      const storedHash  = user?.password;
+       if (user && storedHash) {
+        const isMatch = await bcrypt.compare(password, storedHash);
         console.log('login successful');
-        return true;
-      } 
+        console.log('is matchhhhh',isMatch);
+        return isMatch ? true : false;
+       }
       else{
         console.log('login failed'); 
-        return null; 
+        return null;  
       }
     } catch (error) {
       console.error("Login failed:", error);

@@ -1,11 +1,18 @@
+'use client'
+
+import { sendOtp } from "@/lib/actions/auth.action";
 import Link from "next/link";
-import { Dispatch, SetStateAction, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useRef, useState } from "react";
 
 type otpFormParams = {
   email: string | undefined;
 };
 
 export default function OtpForm({ email }: otpFormParams) {
+
+  const router = useRouter();
+
   const [otp, setOtp] = useState<string[]>(["", "", "", ""]);
   const inputRefs = useRef<HTMLInputElement[]>([]);
 
@@ -23,12 +30,24 @@ export default function OtpForm({ email }: otpFormParams) {
     }
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault(); 
     const enteredOtp = otp.join("");
-    
-  };
+    const correctOtp = +enteredOtp
 
+    if (email) {
+      try {
+        const response = await sendOtp(email, correctOtp);
+        if (response) {
+          console.log('this is response otp redirect', response);
+          router.push(`/`); 
+        }
+      } catch (error) {
+        console.error('OTP verification failed:', error);
+      }
+    }
+  };
+ 
   return (
     <div className="relative bg-white px-6 pt-10 pb-9 shadow-xl mx-auto w-full max-w-lg rounded-2xl">
       <div className="mx-auto flex w-full max-w-md flex-col space-y-16">

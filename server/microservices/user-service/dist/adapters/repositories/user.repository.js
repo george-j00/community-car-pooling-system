@@ -8,8 +8,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserRepository = void 0;
+const bcryptjs_1 = __importDefault(require("bcryptjs"));
 class UserRepository {
     constructor(UserModel) {
         this.UserModel = UserModel;
@@ -32,9 +36,13 @@ class UserRepository {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const user = yield this.UserModel.findOne({ email: email }).exec();
-                if (user && user.password === password) {
+                console.log('this is user ', user === null || user === void 0 ? void 0 : user.password, password);
+                const storedHash = user === null || user === void 0 ? void 0 : user.password;
+                if (user && storedHash) {
+                    const isMatch = yield bcryptjs_1.default.compare(password, storedHash);
                     console.log('login successful');
-                    return true;
+                    console.log('is matchhhhh', isMatch);
+                    return isMatch ? true : false;
                 }
                 else {
                     console.log('login failed');

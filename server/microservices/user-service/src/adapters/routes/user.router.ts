@@ -13,7 +13,7 @@ export class UserRouter {
   userUsecase = new UserUsecase(this.userRepository);
   consumerMessage = new AuthConsumers(this.userUsecase);
   userController = new UserController(this.userUsecase);
-
+    
   constructor() {
     // this.router.post("/api/user/add-address",(req: Request, res: Response) => {
     //     this.userController.add_address(req, res);
@@ -25,10 +25,10 @@ export class UserRouter {
     //   }
     // );
   }
-  
+
   async rabbitMq() {
     await this.consumerMessage.consumeMessages()
-    // await this.consumerMessage.loginCommunications();
+    await this.consumerMessage.loginCommunications();
   }
 }
 

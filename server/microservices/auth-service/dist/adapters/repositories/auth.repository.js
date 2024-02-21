@@ -12,8 +12,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthRepository = void 0;
 const auth_model_1 = require("../../models/auth.model");
 class AuthRepository {
-    constructor(authModel) {
+    constructor(authModel, rabbitMq) {
         this.AuthModel = authModel;
+        this.RabbitMq = rabbitMq;
     }
     register(authCredentials) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -32,13 +33,15 @@ class AuthRepository {
             try {
                 const existingData = yield auth_model_1.AuthModel.findOne({ email: email });
                 if (!existingData) {
-                    throw new Error('User not found');
+                    throw new Error("User not found");
                 }
-                if (existingData.otp !== otp || Date.now() - existingData.createdAt.getTime() > 60000) {
-                    console.log('OTP validation failed due to timeout');
+                if (existingData.otp !== otp ||
+                    Date.now() - existingData.createdAt.getTime() > 60000) {
+                    console.log("OTP validation failed due to timeout");
                     return false;
                 }
-                console.log('OTP validation sucessfully completed');
+                console.log("OTP validation sucessfully completed");
+                yield this.RabbitMq.publishUserRegisteredEvent(existingData);
                 return true;
             }
             catch (error) {
