@@ -1,18 +1,32 @@
-"use client";
 import Link from "next/link";
-import { useRef } from "react";
+import { Dispatch, SetStateAction, useRef, useState } from "react";
 
 type otpFormParams = {
-  email: string;
+  email: string | undefined;
 };
+
 export default function OtpForm({ email }: otpFormParams) {
+  const [otp, setOtp] = useState<string[]>(["", "", "", ""]);
   const inputRefs = useRef<HTMLInputElement[]>([]);
 
-  // Function to focus on the next input element
-  const focusNextInput = (index: number) => {
-    if (index < inputRefs.current.length - 1) {
-      inputRefs.current[index + 1].focus();
+  const handleChange = (index: number, value: string) => {
+    if (/^\d+$/.test(value)) {
+      setOtp((prevOtp) => {
+        const newOtp = [...prevOtp];
+        newOtp[index] = value;
+        return newOtp;
+      });
+
+      if (index < inputRefs.current.length - 1) {
+        inputRefs.current[index + 1].focus();
+      }
     }
+  };
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const enteredOtp = otp.join("");
+    
   };
 
   return (
@@ -25,28 +39,18 @@ export default function OtpForm({ email }: otpFormParams) {
           </p>
         </div>
 
-        <form action="/api/verify-email" method="post">
+        <form onSubmit={handleSubmit}>
           <div className="flex flex-col space-y-16">
             <div className="flex flex-row items-center justify-between mx-auto w-full max-w-xs">
-              {[1, 2, 3, 4].map((_, index) => (
+              {otp.map((digit, index) => (
                 <div key={index} className="w-16 h-16">
                   <input
-                    ref={(el) =>
-                      (inputRefs.current[index] = el as HTMLInputElement)
-                    }
+                    ref={(el) => (inputRefs.current[index] = el as HTMLInputElement)}
                     className="w-full h-full flex flex-col items-center justify-center text-center px-5 outline-none rounded-xl border border-gray-200 text-lg bg-white focus:bg-gray-50 focus:ring-1 ring-blue-700"
                     type="text"
-                    name={`code${index + 1}`}
-                    id={`code${index + 1}`}
-                    maxLength={1} 
-                    onChange={(e) => {
-                      const enteredValue = e.target.value;
-                      if (/^\d+$/.test(enteredValue)) {
-                        focusNextInput(index);
-                      } else {
-                        e.target.value = "";
-                      }
-                    }}
+                    value={digit}
+                    maxLength={1}
+                    onChange={(e) => handleChange(index, e.target.value)}
                   />
                 </div>
               ))}
