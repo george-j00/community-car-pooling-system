@@ -22,7 +22,12 @@ const authSchema = new mongoose_1.default.Schema({
     otp: {
         type: Number,
         required: true,
-        expires: "1m",
+    },
+    createdAt: {
+        type: Date,
+        required: true,
+        default: Date.now,
+        expires: 60,
     },
 });
 exports.AuthModel = mongoose_1.default.model("AuthModel", authSchema);

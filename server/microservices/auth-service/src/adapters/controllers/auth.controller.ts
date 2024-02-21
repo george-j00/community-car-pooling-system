@@ -27,13 +27,24 @@ export class AuthController {
         otp: generatedOtp,
       };
 
-    //   await this.authUsecase.register(payload);
       await sendEmail(email, generatedOtp);
+      await this.authUsecase.register(payload);
 
-      //   res.status(200).send('Address added successfully');
+      res.status(200).send('otp sent successfully');
     } catch (error) {
-      res.status(500).send("Error while adding address");
+      res.status(500).send("Error while sending the otp");
       console.log("Error while adding => ", error);
     }
   }
+
+  async validateOtp(req: Request, res: Response) {
+   try {
+    const {email,otp} = req.body;
+    await this.authUsecase.validateOtp(email,otp);
+    res.status(200).send('otp validated successfully');
+   } catch (error) {
+    res.status(401).send('otp validation failed');
+   }
+  }
+
 }

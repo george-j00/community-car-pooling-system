@@ -38,13 +38,25 @@ class AuthController {
                     password: hashedPassword,
                     otp: generatedOtp,
                 };
-                //   await this.authUsecase.register(payload);
                 yield (0, nodemailer_1.sendEmail)(email, generatedOtp);
-                //   res.status(200).send('Address added successfully');
+                yield this.authUsecase.register(payload);
+                res.status(200).send('otp sent successfully');
             }
             catch (error) {
-                res.status(500).send("Error while adding address");
+                res.status(500).send("Error while sending the otp");
                 console.log("Error while adding => ", error);
+            }
+        });
+    }
+    validateOtp(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { email, otp } = req.body;
+                yield this.authUsecase.validateOtp(email, otp);
+                res.status(200).send('otp validated successfully');
+            }
+            catch (error) {
+                res.status(401).send('otp validation failed');
             }
         });
     }

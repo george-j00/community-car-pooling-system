@@ -7,5 +7,4 @@ export interface IAuthSchema extends Document {
     password: string;
     otp:number;
     createdAt: Date;
-    updatedAt: Date;
   }

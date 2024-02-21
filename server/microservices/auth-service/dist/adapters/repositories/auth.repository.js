@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthRepository = void 0;
+const auth_model_1 = require("../../models/auth.model");
 class AuthRepository {
     constructor(authModel) {
         this.AuthModel = authModel;
@@ -23,6 +24,26 @@ class AuthRepository {
             catch (error) {
                 console.error("Registration failed:", error);
                 throw new Error("Registration failed");
+            }
+        });
+    }
+    validateOtp(email, otp) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const existingData = yield auth_model_1.AuthModel.findOne({ email: email });
+                if (!existingData) {
+                    throw new Error('User not found');
+                }
+                if (existingData.otp !== otp || Date.now() - existingData.createdAt.getTime() > 60000) {
+                    console.log('OTP validation failed due to timeout');
+                    return false;
+                }
+                console.log('OTP validation sucessfully completed');
+                return true;
+            }
+            catch (error) {
+                console.error("OTP validation failed:", error);
+                throw new Error("OTP validation failed");
             }
         });
     }

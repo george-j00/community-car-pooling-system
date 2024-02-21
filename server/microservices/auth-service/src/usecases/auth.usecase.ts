@@ -9,8 +9,12 @@ export class AuthUsecase implements IAuthUsecase {
     register(authCredentials: AuthEntity): Promise<void> {
         return this.authRepository.register(authCredentials);
     }
+    validateOtp(email:string ,otp: number): Promise<boolean> {
+        return this.authRepository.validateOtp(email , otp);
+    }
+
     login(email: string, password: string): Promise<string | null> {
         throw new Error("Method not implemented.");
-    }
+    } 
     
 }

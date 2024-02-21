@@ -15,28 +15,30 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.sendEmail = void 0;
 const nodemailer_1 = __importDefault(require("nodemailer"));
 const sendEmail = (email, otp) => __awaiter(void 0, void 0, void 0, function* () {
-    let transporter = nodemailer_1.default.createTransport({
-        service: 'gmail',
-        auth: {
-            user: 'gj816373@gmail.com',
-            pass: 'oykvaqiekefunsfp',
-        },
-    });
-    console.log(otp, 'OTP');
-    const mailOptions = {
-        from: 'gj816373@gmail.com',
-        // to: 'subingeorge027@gmail.com', // Replace with the user's email address
-        to: email,
-        subject: 'OTP Verification',
-        text: `Your OTP for verification is: ${otp}`,
-    };
-    transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-            console.error('Error sending email:', error);
-        }
-        else {
-            console.log('Email sent successfully:', info.response);
-        }
+    return new Promise((resolve, reject) => {
+        let transporter = nodemailer_1.default.createTransport({
+            service: 'gmail',
+            auth: {
+                user: 'gj816373@gmail.com',
+                pass: 'oykvaqiekefunsfp',
+            },
+        });
+        console.log(otp, 'OTP');
+        const mailOptions = {
+            from: 'gj816373@gmail.com',
+            to: email,
+            subject: 'OTP Verification',
+            text: `Your OTP for verification is: ${otp}`,
+        };
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                reject(error); // Reject the promise if there is an error
+            }
+            else {
+                console.log('Email sent successfully:', info.response);
+                resolve(info.response); // Resolve the promise if email is sent successfully
+            }
+        });
     });
 });
 exports.sendEmail = sendEmail;

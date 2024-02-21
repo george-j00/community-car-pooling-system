@@ -18,7 +18,12 @@ const authSchema = new mongoose.Schema<IAuthSchema>({
   otp: {
     type: Number,
     required: true,
-    expires: "1m",
+  },
+  createdAt: {
+    type: Date,
+    required: true,
+    default: Date.now, 
+    expires: 60, 
   },
 });
 

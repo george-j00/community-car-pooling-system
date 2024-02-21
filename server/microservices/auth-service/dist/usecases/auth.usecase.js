@@ -8,6 +8,9 @@ class AuthUsecase {
     register(authCredentials) {
         return this.authRepository.register(authCredentials);
     }
+    validateOtp(email, otp) {
+        return this.authRepository.validateOtp(email, otp);
+    }
     login(email, password) {
         throw new Error("Method not implemented.");
     }
