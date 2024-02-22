@@ -66,3 +66,12 @@
   }
 }
  
+@layer utilities {
+  .wrapper {
+    @apply max-w-7xl lg:mx-auto p-5 md:px-10 xl:px-0 w-full;
+  }
+  .image-size {
+    min-width: 48vw;
+    max-height: 100vh;
+  }
+}
