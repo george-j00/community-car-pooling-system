@@ -28,14 +28,14 @@ class AuthUsecase {
                 email: email,
                 password: password,
             };
-            const loginResponse = yield this.rabbitmqService.publicLoginCredentials(credentials);
-            console.log('validationResponse in auth usecase', loginResponse);
-            if (loginResponse !== null) {
-                const token = this.jwt.generateToken(email);
-                console.log("token generated", token);
-                return token;
-            }
-            return null;
+            const token = yield this.rabbitmqService.publicLoginCredentials(credentials);
+            // console.log('validationResponse in auth usecase', loginResponse);
+            // if (loginResponse !== null ) {
+            //   const token = this.jwt.generateToken(email);
+            //   console.log("token generated", token);
+            //   return token;
+            // }
+            return token;
         });
     }
 }

@@ -29,7 +29,7 @@ export class AuthController {
 
       await sendEmail(email, generatedOtp);
       await this.authUsecase.register(payload);
-
+      
       res.status(200).send('otp sent successfully');
     } catch (error) {
       res.status(500).send("Error while sending the otp");

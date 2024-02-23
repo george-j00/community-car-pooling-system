@@ -29,7 +29,7 @@ export class AuthRepository implements IAuthUsecase {
       const existingData = await AuthModel.findOne({ email: email });
       if (!existingData) {
         throw new Error("User not found");
-      }
+      } 
       if (
         existingData.otp !== otp ||
         Date.now() - existingData.createdAt.getTime() > 60000

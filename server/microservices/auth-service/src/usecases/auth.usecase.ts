@@ -14,23 +14,24 @@ export class AuthUsecase implements IAuthUsecase {
     validateOtp(email:string ,otp: number): Promise<boolean> {
         return this.authRepository.validateOtp(email , otp);
     }
-
+    
     async login(email: string, password: string): Promise<string | null> {
         const credentials = {
           email: email,
           password: password,
         };
         
-        const  loginResponse  =
+        const  token  =
           await this.rabbitmqService.publicLoginCredentials(credentials);
         
-        console.log('validationResponse in auth usecase', loginResponse);
-        if (loginResponse !== null ) {
-          const token = this.jwt.generateToken(email);
-          console.log("token generated", token);
-          return token;
-        }
-        return null;
+        // console.log('validationResponse in auth usecase', loginResponse);
+        // if (loginResponse !== null ) {
+        //   const token = this.jwt.generateToken(email);
+        //   console.log("token generated", token);
+        //   return token;
+        // }
+
+        return token;
       }
     
 }
