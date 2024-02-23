@@ -4,26 +4,26 @@ import { UserRepository } from "../repositories/user.repository";
 import { UserModel } from "../../models/user.model";
 import { UserUsecase } from "../../usecases/user.usecase";
 import { AuthConsumers } from "../../frameworks/messageBroker/rabbitmq";
+import { JwtService } from "../../frameworks/jwt/jwt";
 
 
 export class UserRouter {
   router = Router();
-
-  userRepository = new UserRepository(UserModel);
+  secret_key = "secret_key";
+  jwt = new JwtService(this.secret_key)
+  
+  userRepository = new UserRepository(UserModel, this.jwt);
   userUsecase = new UserUsecase(this.userRepository);
   consumerMessage = new AuthConsumers(this.userUsecase);
   userController = new UserController(this.userUsecase);
     
   constructor() {
-    // this.router.post("/api/user/add-address",(req: Request, res: Response) => {
-    //     this.userController.add_address(req, res);
-    //   }
-    // );
-
-    // this.router.post("/api/user/delete-address",(req: Request, res: Response) => {
-    //     this.userController.delete_address(req, res);
-    //   }
-    // );
+    this.router.post("/api/user/add-car",(req: Request, res: Response) => {
+        this.userController.add_car(req, res);
+        // console.log(req.body);
+        
+      }
+    );
   }
 
   async rabbitMq() {

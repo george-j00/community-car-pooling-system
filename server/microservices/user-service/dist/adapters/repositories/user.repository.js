@@ -15,8 +15,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserRepository = void 0;
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 class UserRepository {
-    constructor(UserModel) {
+    constructor(UserModel, Jwt) {
         this.UserModel = UserModel;
+        this.Jwt = Jwt;
     }
     register(user) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -41,8 +42,8 @@ class UserRepository {
                 if (user && storedHash) {
                     const isMatch = yield bcryptjs_1.default.compare(password, storedHash);
                     console.log('login successful');
-                    console.log('is matchhhhh', isMatch);
-                    return isMatch ? true : false;
+                    const token = this.Jwt.generateToken(email);
+                    return isMatch && token ? token : null;
                 }
                 else {
                     console.log('login failed');
@@ -52,6 +53,20 @@ class UserRepository {
             catch (error) {
                 console.error("Login failed:", error);
                 throw new Error("Login failed");
+            }
+        });
+    }
+    add_car(userId, addCarDetails) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const addedCar = this.UserModel.findByIdAndUpdate(userId, addCarDetails);
+                console.log('add car details ', addedCar);
+                // await newUser.save();
+                console.log('user added successfully');
+            }
+            catch (error) {
+                console.error("Registration failed:", error);
+                throw new Error("Registration failed");
             }
         });
     }

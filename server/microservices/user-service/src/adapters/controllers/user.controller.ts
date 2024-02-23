@@ -8,7 +8,16 @@ export class UserController {
     this.userUsecase = userUsecase;
   }
   
-  
+  async add_car(req: Request, res: Response) {
+    try {
+        const {userId , addCarDetails} = req.body;
+        await this.userUsecase.add_car(userId , addCarDetails);
+        res.status(200).send('Address added successfully');
+    } catch (error) {
+        res.status(500).send('Error while adding address');
+        console.log('Error while adding => ', error);
+    }
+}
 
 //   async add_address(req: Request, res: Response) {
 //     try {

@@ -16,21 +16,20 @@ const user_repository_1 = require("../repositories/user.repository");
 const user_model_1 = require("../../models/user.model");
 const user_usecase_1 = require("../../usecases/user.usecase");
 const rabbitmq_1 = require("../../frameworks/messageBroker/rabbitmq");
+const jwt_1 = require("../../frameworks/jwt/jwt");
 class UserRouter {
     constructor() {
-        // this.router.post("/api/user/add-address",(req: Request, res: Response) => {
-        //     this.userController.add_address(req, res);
-        //   }
-        // );
         this.router = (0, express_1.Router)();
-        this.userRepository = new user_repository_1.UserRepository(user_model_1.UserModel);
+        this.secret_key = "secret_key";
+        this.jwt = new jwt_1.JwtService(this.secret_key);
+        this.userRepository = new user_repository_1.UserRepository(user_model_1.UserModel, this.jwt);
         this.userUsecase = new user_usecase_1.UserUsecase(this.userRepository);
         this.consumerMessage = new rabbitmq_1.AuthConsumers(this.userUsecase);
         this.userController = new user_controller_1.UserController(this.userUsecase);
-        // this.router.post("/api/user/delete-address",(req: Request, res: Response) => {
-        //     this.userController.delete_address(req, res);
-        //   }
-        // );
+        this.router.post("/api/user/add-car", (req, res) => {
+            this.userController.add_car(req, res);
+            // console.log(req.body);
+        });
     }
     rabbitMq() {
         return __awaiter(this, void 0, void 0, function* () {

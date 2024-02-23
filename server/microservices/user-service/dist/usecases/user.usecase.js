@@ -11,5 +11,8 @@ class UserUsecase {
     login(email, password) {
         return this.userRepository.login(email, password);
     }
+    add_car(userId, addCarData) {
+        return this.userRepository.add_car(userId, addCarData);
+    }
 }
 exports.UserUsecase = UserUsecase;

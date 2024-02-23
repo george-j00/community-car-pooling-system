@@ -9,8 +9,12 @@ export class UserUsecase implements IUserCase{
     register(user: UserEntity): Promise<void> {
       return this.userRepository.register(user);
     }
-    login(email: string, password: string): Promise<boolean | null> {
+    login(email: string, password: string): Promise<string | null> {
         return this.userRepository.login(email, password);
     }
+    add_car(userId : string ,addCarData: UserEntity): Promise<void> {
+      return this.userRepository.add_car(userId, addCarData);
+    }
+
 
 }
