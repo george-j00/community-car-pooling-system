@@ -37,25 +37,32 @@ class AuthController {
             }
         });
     }
+    otpGenerator() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const otp = otp_generator_1.default.generate(4, {
+                upperCaseAlphabets: false,
+                specialChars: false,
+                lowerCaseAlphabets: false,
+                digits: true,
+            });
+            const generatedOtp = +otp;
+            return generatedOtp;
+        });
+    }
     register_user(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const { username, email, password } = req.body;
                 const saltRounds = 10;
                 const hashedPassword = yield bcryptjs_1.default.hash(password, saltRounds);
-                const generatedOtp = +otp_generator_1.default.generate(4, {
-                    upperCaseAlphabets: false,
-                    specialChars: false,
-                    lowerCaseAlphabets: false,
-                    digits: true,
-                });
+                const OTP = yield this.otpGenerator();
                 const payload = {
                     username,
                     email,
                     password: hashedPassword,
-                    otp: generatedOtp,
+                    otp: OTP,
                 };
-                yield (0, nodemailer_1.sendEmail)(email, generatedOtp);
+                yield (0, nodemailer_1.sendEmail)(email, OTP);
                 yield this.authUsecase.register(payload);
                 res.status(200).send('otp sent successfully');
             }
@@ -72,6 +79,22 @@ class AuthController {
                 const userData = yield this.authUsecase.validateOtp(email, otp);
                 console.log('userDAta is sent to client ', userData);
                 res.status(200).json({ user: userData });
+            }
+            catch (error) {
+                res.status(401).send('otp validation failed');
+            }
+        });
+    }
+    resendOtp(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { email } = req.body;
+                const otp = yield this.otpGenerator();
+                console.log('resened', email, otp);
+                yield (0, nodemailer_1.sendEmail)(email, otp);
+                yield this.authUsecase.resendOtp(email, otp);
+                console.log('otp resend succssfull ');
+                // res.status(200); 
             }
             catch (error) {
                 res.status(401).send('otp validation failed');

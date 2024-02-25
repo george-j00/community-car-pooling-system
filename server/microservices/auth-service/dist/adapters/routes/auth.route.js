@@ -23,6 +23,9 @@ class AuthRouter {
         this.router.post("/api/auth/register/send-otp", (req, res) => {
             this.authController.validateOtp(req, res);
         });
+        this.router.post("/api/auth/register/resend-otp", (req, res) => {
+            this.authController.resendOtp(req, res);
+        });
         this.router.post("/api/auth/login", (req, res) => {
             this.authController.login_user(req, res);
         });

@@ -15,18 +15,10 @@ export class AuthUsecase implements IAuthUsecase {
     validateOtp(email:string ,otp: number): Promise<IAuthSchema> {
         return this.authRepository.validateOtp(email , otp);
     }
+    resendOtp(email:string,otp:number): Promise<void> {
+        return this.authRepository.resendOtp(email,otp);
+    }
       
-    // async login(email: string, password: string): Promise<string | null> {
-    //     const credentials = {
-    //       email: email,
-    //       password: password,
-    //     }; 
-         
-    //     const  token  = await this.rabbitmqService.publicLoginCredentials(credentials);
-    //     console.log('generated token',token);
-
-    //     return token;
-    //   } 
     async login(email: string, password: string): Promise<string> {
       const userLogin = {
           email: email,

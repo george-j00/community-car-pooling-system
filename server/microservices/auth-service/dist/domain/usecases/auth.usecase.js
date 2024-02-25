@@ -22,15 +22,9 @@ class AuthUsecase {
     validateOtp(email, otp) {
         return this.authRepository.validateOtp(email, otp);
     }
-    // async login(email: string, password: string): Promise<string | null> {
-    //     const credentials = {
-    //       email: email,
-    //       password: password,
-    //     }; 
-    //     const  token  = await this.rabbitmqService.publicLoginCredentials(credentials);
-    //     console.log('generated token',token);
-    //     return token;
-    //   } 
+    resendOtp(email, otp) {
+        return this.authRepository.resendOtp(email, otp);
+    }
     login(email, password) {
         return __awaiter(this, void 0, void 0, function* () {
             const userLogin = {

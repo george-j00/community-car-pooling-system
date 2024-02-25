@@ -7,27 +7,32 @@ import { sendEmail } from "../../frameworks/nodemailer/nodemailer";
 export class AuthController {
   constructor(private authUsecase: AuthUsecase) {}
 
+  async otpGenerator():Promise<number> {
+    const otp = otpGenerator.generate(4, {
+      upperCaseAlphabets: false,
+      specialChars: false,
+      lowerCaseAlphabets: false,
+      digits: true,
+    });
+    const generatedOtp = +otp;
+    return generatedOtp
+  }
   async register_user(req: Request, res: Response) {
     try {
       const { username, email, password } = req.body;
 
       const saltRounds = 10;
       const hashedPassword = await bcrypt.hash(password, saltRounds);
-      const generatedOtp = +otpGenerator.generate(4, {
-        upperCaseAlphabets: false,
-        specialChars: false,
-        lowerCaseAlphabets: false,
-        digits: true,
-      });
+      const OTP = await this.otpGenerator()
 
       const payload = {
         username,
         email,
         password: hashedPassword,
-        otp: generatedOtp,
+        otp: OTP,
       };
-
-      await sendEmail(email, generatedOtp);
+      
+      await sendEmail(email, OTP);
       await this.authUsecase.register(payload);
       
       res.status(200).send('otp sent successfully');
@@ -48,6 +53,24 @@ export class AuthController {
     res.status(401).send('otp validation failed');
    }
   }
+
+  async resendOtp(req: Request, res: Response) {
+   try {
+    const { email } = req.body;
+
+    const otp = await this.otpGenerator()
+
+    console.log('resened',email,otp);
+    
+    await sendEmail(email, otp);
+    await this.authUsecase.resendOtp(email,otp);
+   console.log('otp resend succssfull ');
+    // res.status(200); 
+   } catch (error) {  
+    res.status(401).send('otp validation failed');
+   }
+  }
+
 
   login_user = async (req: Request, res: Response) => {
     try {

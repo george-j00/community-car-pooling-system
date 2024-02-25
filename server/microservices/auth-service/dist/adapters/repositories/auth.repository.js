@@ -35,19 +35,39 @@ class AuthRepository {
                 if (!existingData) {
                     throw new Error("User not found");
                 }
+                console.log('db otp , user otp ', existingData === null || existingData === void 0 ? void 0 : existingData.otp, otp);
                 if (existingData.otp !== otp ||
                     Date.now() - existingData.createdAt.getTime() > 60000) {
                     console.log("OTP validation failed due to timeout");
+                    throw new Error("OTP validation failed");
                 }
-                console.log("OTP validation sucessfully completed");
-                const userData = yield this.RabbitMq.userRegPublisher(existingData);
-                console.log('final user data ', userData);
-                return userData;
+                else {
+                    console.log("OTP validation sucessfully completed");
+                    const userData = yield this.RabbitMq.userRegPublisher(existingData);
+                    console.log("final user data ", userData);
+                    return userData;
+                }
             }
             catch (error) {
                 console.error("OTP validation failed:", error);
-                // return null;
                 throw new Error("OTP validation failed");
+            }
+        });
+    }
+    resendOtp(email, otp) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const existingData = yield auth_model_1.AuthModel.findOne({ email: email });
+                if (!existingData) {
+                    throw new Error("User not found");
+                }
+                if (existingData === null || existingData === void 0 ? void 0 : existingData.otp) {
+                    yield auth_model_1.AuthModel.findOneAndUpdate({ email: email }, { otp: otp });
+                    console.log("OTP updated successfully");
+                }
+            }
+            catch (error) {
+                console.log(error);
             }
         });
     }

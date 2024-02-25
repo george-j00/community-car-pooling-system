@@ -24,29 +24,43 @@ export class AuthRepository implements IAuthUsecase {
     }
   }
 
-  async validateOtp(email: string, otp: number): Promise<any > {
+  async validateOtp(email: string, otp: number): Promise<any> {
     try {
       const existingData = await AuthModel.findOne({ email: email });
       if (!existingData) {
         throw new Error("User not found");
-      } 
+      }
+      console.log('db otp , user otp ',existingData?.otp , otp);
       if (
         existingData.otp !== otp ||
         Date.now() - existingData.createdAt.getTime() > 60000
       ) {
         console.log("OTP validation failed due to timeout");
+        throw new Error("OTP validation failed");
+      } else {
+        console.log("OTP validation sucessfully completed");
+        const userData = await this.RabbitMq.userRegPublisher(existingData);
+        console.log("final user data ", userData);
+        return userData;
       }
-      console.log("OTP validation sucessfully completed");
-
-     const userData = await this.RabbitMq.userRegPublisher(existingData)
-
-      console.log('final user data ',userData);
-      return userData
-      
     } catch (error) {
       console.error("OTP validation failed:", error);
-      // return null;
       throw new Error("OTP validation failed");
+    }
+  }
+
+  async resendOtp(email: string, otp: number) {
+    try {
+      const existingData = await AuthModel.findOne({ email: email });
+      if (!existingData) {
+        throw new Error("User not found");
+      }
+      if (existingData?.otp) {
+        await AuthModel.findOneAndUpdate({ email: email }, { otp: otp });
+        console.log("OTP updated successfully");
+      }
+    } catch (error) {
+      console.log(error);
     }
   }
 
@@ -54,4 +68,3 @@ export class AuthRepository implements IAuthUsecase {
     throw new Error("Method not implemented.");
   }
 }
- 

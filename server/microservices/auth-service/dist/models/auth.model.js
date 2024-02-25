@@ -27,7 +27,7 @@ const authSchema = new mongoose_1.default.Schema({
         type: Date,
         required: true,
         default: Date.now,
-        expires: 60,
+        expires: 120,
     },
 });
 exports.AuthModel = mongoose_1.default.model("AuthModel", authSchema);

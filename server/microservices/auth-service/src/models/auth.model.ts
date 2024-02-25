@@ -23,7 +23,7 @@ const authSchema = new mongoose.Schema<IAuthSchema>({
     type: Date,
     required: true,
     default: Date.now, 
-    expires: 60, 
+    expires: 120, 
   },
 });
 
