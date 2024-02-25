@@ -1,7 +1,7 @@
 import { Model } from "mongoose";
 import { IAuthSchema } from "../../interfaces/IAuthSchema";
 import { IAuthUsecase } from "../../interfaces/IAuthUsecase";
-import { AuthEntity } from "../../entity/auth.entity";
+import { AuthEntity } from "../../domain/entity/auth.entity";
 import { AuthModel } from "../../models/auth.model";
 import { RabbitMQService } from "../../frameworks/messageBroker/rabbitmq";
 
@@ -24,7 +24,7 @@ export class AuthRepository implements IAuthUsecase {
     }
   }
 
-  async validateOtp(email: string, otp: number): Promise<boolean> {
+  async validateOtp(email: string, otp: number): Promise<any > {
     try {
       const existingData = await AuthModel.findOne({ email: email });
       if (!existingData) {
@@ -35,19 +35,23 @@ export class AuthRepository implements IAuthUsecase {
         Date.now() - existingData.createdAt.getTime() > 60000
       ) {
         console.log("OTP validation failed due to timeout");
-        return false;
       }
       console.log("OTP validation sucessfully completed");
 
-      await this.RabbitMq.publishUserRegisteredEvent(existingData);
-      return true;
+     const userData = await this.RabbitMq.userRegPublisher(existingData)
+
+      console.log('final user data ',userData);
+      return userData
+      
     } catch (error) {
       console.error("OTP validation failed:", error);
+      // return null;
       throw new Error("OTP validation failed");
     }
   }
 
-  login(email: string, password: string): Promise<string | null> {
+  login(email: string, password: string): Promise<string> {
     throw new Error("Method not implemented.");
   }
 }
+ 

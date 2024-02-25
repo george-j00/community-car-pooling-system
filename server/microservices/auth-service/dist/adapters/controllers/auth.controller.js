@@ -22,10 +22,9 @@ class AuthController {
         this.login_user = (req, res) => __awaiter(this, void 0, void 0, function* () {
             try {
                 const { email, password } = req.body;
-                const saltRounds = 10;
-                const loginResponse = yield this.authUsecase.login(email, password);
-                if (loginResponse !== null) {
-                    res.status(200).json({ token: loginResponse });
+                const token = yield this.authUsecase.login(email, password);
+                if (token !== null) {
+                    res.status(200).json({ token });
                 }
                 else {
                     res.status(401).json({ error: "Login failed" });
@@ -70,8 +69,9 @@ class AuthController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const { email, otp } = req.body;
-                yield this.authUsecase.validateOtp(email, otp);
-                res.status(200).send('otp validated successfully');
+                const userData = yield this.authUsecase.validateOtp(email, otp);
+                console.log('userDAta is sent to client ', userData);
+                res.status(200).json({ user: userData });
             }
             catch (error) {
                 res.status(401).send('otp validation failed');

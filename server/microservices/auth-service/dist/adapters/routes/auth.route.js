@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.authRouter = exports.AuthRouter = void 0;
 const express_1 = require("express");
 const auth_controller_1 = require("../controllers/auth.controller");
-const auth_usecase_1 = require("../../usecases/auth.usecase");
+const auth_usecase_1 = require("../../domain/usecases/auth.usecase");
 const auth_repository_1 = require("../repositories/auth.repository");
 const auth_model_1 = require("../../models/auth.model");
 const rabbitmq_1 = require("../../frameworks/messageBroker/rabbitmq");

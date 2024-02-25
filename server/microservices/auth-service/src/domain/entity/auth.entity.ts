@@ -1,8 +1,8 @@
 export class AuthEntity {
-    public readonly username: string; 
+    public readonly username?: string; 
     public readonly email: string;
     public readonly password: string;
-    public readonly otp: number;
+    public readonly otp?: number;
     public readonly id?: string;
 
     
@@ -13,4 +13,4 @@ export class AuthEntity {
       this.password=password
       this.otp = otp;
     }
-  }
+  }   

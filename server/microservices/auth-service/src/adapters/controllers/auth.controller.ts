@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import otpGenerator from "otp-generator";
-import { AuthUsecase } from "../../usecases/auth.usecase";
+import { AuthUsecase } from "../../domain/usecases/auth.usecase";
 import { sendEmail } from "../../frameworks/nodemailer/nodemailer";
 
 export class AuthController {
@@ -40,9 +40,11 @@ export class AuthController {
   async validateOtp(req: Request, res: Response) {
    try {
     const {email,otp} = req.body;
-    await this.authUsecase.validateOtp(email,otp);
-    res.status(200).send('otp validated successfully');
-   } catch (error) {
+   const userData =  await this.authUsecase.validateOtp(email,otp);
+   console.log('userDAta is sent to client ',userData);
+    res.status(200).json({user : userData})
+    
+   } catch (error) {  
     res.status(401).send('otp validation failed');
    }
   }
@@ -51,16 +53,17 @@ export class AuthController {
     try {
       const {email ,password} = req.body;
 
-      const saltRounds = 10;
-      const loginResponse = await this.authUsecase.login(email, password);
+      const token = await this.authUsecase.login(email, password); 
+      
+    if (token !== null) {
 
-    if (loginResponse !== null) {
-      res.status(200).json({ token: loginResponse });
-    } else {
+      res.status(200).json({token});
+    
+    } else { 
       res.status(401).json({ error: "Login failed" });
       console.log("Login failed for user:", email);
-    }
-
+    } 
+ 
     } catch (error) {
       res.status(500).send("Error while adding User");
       console.log("Error while adding => ", error);

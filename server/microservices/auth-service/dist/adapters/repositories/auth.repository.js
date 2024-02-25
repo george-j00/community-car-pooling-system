@@ -38,14 +38,15 @@ class AuthRepository {
                 if (existingData.otp !== otp ||
                     Date.now() - existingData.createdAt.getTime() > 60000) {
                     console.log("OTP validation failed due to timeout");
-                    return false;
                 }
                 console.log("OTP validation sucessfully completed");
-                yield this.RabbitMq.publishUserRegisteredEvent(existingData);
-                return true;
+                const userData = yield this.RabbitMq.userRegPublisher(existingData);
+                console.log('final user data ', userData);
+                return userData;
             }
             catch (error) {
                 console.error("OTP validation failed:", error);
+                // return null;
                 throw new Error("OTP validation failed");
             }
         });

@@ -1,6 +1,6 @@
 import { Router, Request, Response } from "express";
 import { AuthController } from "../controllers/auth.controller";
-import { AuthUsecase } from "../../usecases/auth.usecase";
+import { AuthUsecase } from "../../domain/usecases/auth.usecase";
 import { AuthRepository } from "../repositories/auth.repository";
 import { AuthModel } from "../../models/auth.model";
 import { RabbitMQService } from "../../frameworks/messageBroker/rabbitmq";

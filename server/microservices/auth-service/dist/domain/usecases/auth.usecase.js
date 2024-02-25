@@ -22,15 +22,39 @@ class AuthUsecase {
     validateOtp(email, otp) {
         return this.authRepository.validateOtp(email, otp);
     }
+    // async login(email: string, password: string): Promise<string | null> {
+    //     const credentials = {
+    //       email: email,
+    //       password: password,
+    //     }; 
+    //     const  token  = await this.rabbitmqService.publicLoginCredentials(credentials);
+    //     console.log('generated token',token);
+    //     return token;
+    //   } 
     login(email, password) {
         return __awaiter(this, void 0, void 0, function* () {
-            const credentials = {
+            const userLogin = {
                 email: email,
-                password: password,
+                password: password
             };
-            const token = yield this.rabbitmqService.publicLoginCredentials(credentials);
-            console.log('generated token', token);
-            return token;
+            console.log(userLogin);
+            const response = yield this.rabbitmqService.publishLoginData(userLogin);
+            if (response === null) {
+                console.log(response, "response is null");
+                throw new Error("Response is null"); // Throw an error or return a default value here
+            }
+            else {
+                console.log(response, "the data");
+                const data = JSON.parse(response);
+                const userData = {
+                    id: data._id,
+                    username: data.username,
+                    email: data.email
+                };
+                console.log(userData);
+                const token = this.jwt.generateToken(userData);
+                return token;
+            }
         });
     }
 }

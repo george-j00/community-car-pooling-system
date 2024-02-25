@@ -18,58 +18,100 @@ class RabbitMQService {
     constructor() {
         this.connection = null;
         this.channel = null;
+        this.correlationIdMap = new Map();
     }
     initialize() {
         return __awaiter(this, void 0, void 0, function* () {
-            // const rabbitmqUrl = process.env.RABBITMQ_URL || "amqp://rabbitmq";
-            const rabbitmqUrl = process.env.RABBITMQ_URL || "amqp://localhost:5672";
-            this.connection = yield amqplib_1.default.connect(rabbitmqUrl);
-            this.channel = yield this.connection.createChannel();
+            try {
+                const rabbitmqUrl = process.env.RABBITMQ_URL || 'amqp://localhost:5672';
+                this.connection = yield amqplib_1.default.connect(rabbitmqUrl);
+                this.channel = yield this.connection.createChannel();
+                console.log('The connection is established');
+            }
+            catch (error) {
+                console.error('Failed to establish connection to RabbitMQ:', error);
+                throw error;
+            }
         });
     }
-    publishUserRegisteredEvent(userData) {
+    ensureChannel() {
         return __awaiter(this, void 0, void 0, function* () {
             if (!this.channel) {
                 yield this.initialize();
             }
-            if (this.channel) {
-                const queue = "registerQueue";
-                yield this.channel.assertQueue(queue, { durable: true });
-                this.channel.sendToQueue(queue, Buffer.from(JSON.stringify(userData)));
-                console.log(`The user data is sent successfully`);
+            return this.channel;
+        });
+    }
+    userRegPublisher(userData) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const channel = yield this.ensureChannel();
+                const queue = 'userReg';
+                yield (channel === null || channel === void 0 ? void 0 : channel.assertQueue(queue, { durable: true }));
+                channel === null || channel === void 0 ? void 0 : channel.sendToQueue(queue, Buffer.from(JSON.stringify(userData)));
+                console.log('The user data passed successfully');
             }
-            else {
-                console.error("Failed to create a channel");
+            catch (error) {
+                console.error('Failed to publish user registration data:', error);
+                throw error;
             }
         });
     }
-    publicLoginCredentials(credentials) {
+    publishLoginData(loginData) {
         return __awaiter(this, void 0, void 0, function* () {
-            const queue1 = "queue1";
-            const queue2 = "queue2";
-            const correlationId = "12345";
-            if (!this.channel) {
-                yield this.initialize();
-            }
-            if (this.channel) {
-                yield this.channel.assertQueue(queue1, { durable: true });
-                yield this.channel.assertQueue(queue2, { durable: true });
-            }
-            return new Promise((resolve, reject) => {
-                if (this.channel) {
-                    this.channel.sendToQueue(queue1, Buffer.from(JSON.stringify(credentials)), { correlationId });
-                    console.log("Login data sent to user service");
-                    this.channel.consume(queue2, (msg) => {
-                        var _a;
-                        if (msg && msg.properties.correlationId === correlationId) {
-                            const loginResponse = JSON.parse(msg.content.toString());
-                            resolve(loginResponse);
-                            console.log("Response from the user service", loginResponse);
-                            (_a = this.channel) === null || _a === void 0 ? void 0 : _a.ack(msg);
-                        }
-                    }, { noAck: false });
+            try {
+                const channel = yield this.ensureChannel();
+                const correlationId = this.generateCorrelationId();
+                const message = JSON.stringify(loginData);
+                yield (channel === null || channel === void 0 ? void 0 : channel.assertQueue('response_queue', { durable: false }));
+                this.consumeResponseQueue();
+                const responsePromise = new Promise((resolve) => {
+                    this.correlationIdMap.set(correlationId, resolve);
+                });
+                yield (channel === null || channel === void 0 ? void 0 : channel.assertQueue('login_queue', { durable: false }));
+                channel === null || channel === void 0 ? void 0 : channel.sendToQueue('login_queue', Buffer.from(message), {
+                    correlationId,
+                    replyTo: 'response_queue',
+                });
+                const response = yield responsePromise;
+                console.log('Received response:', response);
+                if (response === 'false') {
+                    return null;
                 }
-            });
+                return response;
+            }
+            catch (error) {
+                console.error('Error publishing login data:', error);
+                throw error;
+            }
+        });
+    }
+    generateCorrelationId() {
+        return Math.random().toString() + Date.now().toString();
+    }
+    handleResponse(correlationId, response) {
+        const resolveFunction = this.correlationIdMap.get(correlationId);
+        if (resolveFunction) {
+            resolveFunction(response);
+            this.correlationIdMap.delete(correlationId);
+        }
+    }
+    consumeResponseQueue() {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const channel = yield this.ensureChannel();
+                channel === null || channel === void 0 ? void 0 : channel.consume('response_queue', (msg) => {
+                    if (msg && msg.properties.correlationId) {
+                        const correlationId = msg.properties.correlationId;
+                        const response = msg.content.toString();
+                        this.handleResponse(correlationId, response);
+                    }
+                }, { noAck: true });
+            }
+            catch (error) {
+                console.error('Error consuming response queue:', error);
+                throw error;
+            }
         });
     }
 }
