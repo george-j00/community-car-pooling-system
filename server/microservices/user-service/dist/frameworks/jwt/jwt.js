@@ -9,8 +9,12 @@ class JwtService {
     constructor(secretKey) {
         this.secretKey = secretKey;
     }
-    generateToken(email) {
-        return jsonwebtoken_1.default.sign({ email }, this.secretKey, { expiresIn: '15m' });
+    generateToken(userName, email) {
+        const payload = {
+            userName: userName,
+            email: email
+        };
+        return jsonwebtoken_1.default.sign(payload, this.secretKey, { expiresIn: '15m' });
     }
 }
 exports.JwtService = JwtService;

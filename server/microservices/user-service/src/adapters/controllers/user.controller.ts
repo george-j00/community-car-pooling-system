@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { UserUsecase } from "../../usecases/user.usecase";
+import { UserUsecase } from "../../domain/usecases/user.usecase";
 
 export class UserController {
   

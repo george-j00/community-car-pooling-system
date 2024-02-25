@@ -1,4 +1,4 @@
-import { ICarDetails } from "../interfaces/ICarDetails";
+import { ICarDetails } from "../../interfaces/ICarDetails";
 
 export class UserEntity {
 

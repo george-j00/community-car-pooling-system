@@ -1,6 +1,7 @@
-import { UserRepository } from "../adapters/repositories/user.repository";
+import { UserRepository } from "../../adapters/repositories/user.repository";
 import { UserEntity } from "../entity/user.entity";
-import { IUserCase } from "../interfaces/IUserUsecase";
+import { IUserSchema } from "../../interfaces/IUserSchema";
+import { IUserCase } from "../../interfaces/IUserUsecase";
 
 export class UserUsecase implements IUserCase{
 
@@ -15,6 +16,6 @@ export class UserUsecase implements IUserCase{
     add_car(userId : string ,addCarData: UserEntity): Promise<void> {
       return this.userRepository.add_car(userId, addCarData);
     }
+ 
 
-
-}
+}   

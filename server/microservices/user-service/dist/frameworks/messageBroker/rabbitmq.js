@@ -12,43 +12,43 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AuthConsumers = void 0;
+exports.rabbitmq = void 0;
 const amqplib_1 = __importDefault(require("amqplib"));
-class AuthConsumers {
-    constructor(userUsecase) {
-        this.userUsecase = userUsecase;
-        this.connection = null;
-        this.channel = null;
+class rabbitmq {
+    constructor(userUsecases) {
+        this.userUsecases = userUsecases;
+        this.Connection = null;
+        this.Channel = null;
     }
     initialize() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                // const rabbitmqUrl = process.env.RABBITMQ_URL || "amqp://rabbitmq:5672";
-                const rabbitmqUrl = process.env.RABBITMQ_URL || "amqp://localhost:5672";
-                this.connection = yield amqplib_1.default.connect(rabbitmqUrl);
-                this.channel = yield this.connection.createChannel();
-                console.log("rabbitmq connection established");
+                const rabbitmqUrl = "amqp://localhost:5672";
+                this.Connection = yield amqplib_1.default.connect(rabbitmqUrl);
+                this.Channel = yield this.Connection.createChannel();
+                console.log("the connection is established");
             }
-            catch (error) {
-                console.error("Error connecting to RabbitMQ:", error);
-                process.exit(1); // Or handle the error appropriately
+            catch (err) {
+                console.log(err, "the connection is not established");
+                process.exit(1);
             }
         });
     }
-    //register consumer with registerQueue
-    consumeMessages() {
+    userRegConsumer() {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!this.channel) {
+            if (!this.Channel) {
                 yield this.initialize();
             }
-            if (this.channel) {
-                const queue = "registerQueue";
-                yield this.channel.assertQueue(queue, { durable: true });
-                yield this.channel.consume(queue, (msg) => {
+            if (this.Channel) {
+                const queue = "userReg";
+                yield this.Channel.assertQueue(queue, { durable: true });
+                yield this.Channel.consume(queue, (msg) => {
                     if (msg !== null && msg.content) {
                         try {
+                            console.log('row message ', msg);
                             const data = JSON.parse(msg.content.toString());
-                            this.userUsecase.register(data);
+                            console.log("Received message:", data);
+                            this.userUsecases.register(data);
                         }
                         catch (error) {
                             console.error("Error parsing message content:", error);
@@ -62,43 +62,44 @@ class AuthConsumers {
             }
         });
     }
-    loginCommunications() {
+    userLoginConsumer() {
         return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const queue1 = "queue1";
-                const queue2 = "queue2";
-                if (!this.channel) {
-                    yield this.initialize();
-                }
-                if (this.channel) {
-                    yield this.channel.assertQueue(queue1, { durable: true });
-                    yield this.channel.assertQueue(queue2, { durable: true });
-                }
-                if (this.channel) {
-                    yield this.channel.consume(queue1, (msg) => __awaiter(this, void 0, void 0, function* () {
+            if (!this.Channel) {
+                yield this.initialize();
+            }
+            if (this.Channel) {
+                yield this.Channel.assertQueue('response_queue', { durable: false });
+                const queue = 'login_queue';
+                yield this.Channel.assertQueue(queue, { durable: false });
+                this.Channel.consume(queue, (msg) => __awaiter(this, void 0, void 0, function* () {
+                    if (msg !== null && msg.content) {
                         try {
-                            if (this.channel && msg) {
-                                const data = JSON.parse(msg.content.toString());
-                                const correlationId = msg.properties.correlationId;
-                                console.log("Correlation ID:", correlationId);
-                                console.log("Received login credential:", data);
-                                this.channel.ack(msg);
-                                const { email, password } = data;
-                                const loginResponse = yield this.userUsecase.login(email, password);
-                                this.channel.sendToQueue(queue2, Buffer.from(JSON.stringify(loginResponse)), { correlationId });
-                                console.log("Response send back to auth service");
+                            console.log('Raw login message:', msg);
+                            const loginData = JSON.parse(msg.content.toString());
+                            console.log('Received login message:', loginData);
+                            const { email, password } = loginData;
+                            const loginResult = yield this.userUsecases.login(email, password);
+                            const correlationId = msg.properties.correlationId;
+                            const responseQueue = msg.properties.replyTo;
+                            if (correlationId && responseQueue) {
+                                const responseMessage = JSON.stringify(loginResult);
+                                yield this.Channel.sendToQueue(responseQueue, Buffer.from(responseMessage), {
+                                    correlationId,
+                                });
+                                console.log('Login response sent:', responseMessage);
                             }
                         }
                         catch (error) {
-                            console.error("Error processing message:", error);
+                            console.error('Error parsing login message content:', error);
+                            console.log('Raw login message content:', msg.content.toString());
                         }
-                    }), { noAck: false });
-                }
+                    }
+                }), { noAck: true });
             }
-            catch (error) {
-                console.error("Error in login consumer:", error);
+            else {
+                console.error("Failed to create a channel");
             }
         });
     }
 }
-exports.AuthConsumers = AuthConsumers;
+exports.rabbitmq = rabbitmq;

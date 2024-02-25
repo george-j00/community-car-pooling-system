@@ -7,8 +7,12 @@ export class JwtService {
     this.secretKey = secretKey;
   }
   
-  generateToken(email: string): string {
-    return jwt.sign({email}, this.secretKey, { expiresIn: '15m' });
+  generateToken(userName: string , email: string): string {
+    const payload ={
+      userName: userName,
+      email: email
+    }
+    return jwt.sign(payload, this.secretKey, { expiresIn: '15m' });
   }
   
 }

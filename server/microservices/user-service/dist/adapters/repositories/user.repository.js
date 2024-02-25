@@ -22,10 +22,10 @@ class UserRepository {
     register(user) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const newUser = new this.UserModel(user);
-                console.log('this is newuser from rabbitmq ', newUser);
+                const newUser = new this.UserModel(user, { new: true });
+                console.log("this is newuser from rabbitmq ", newUser);
                 yield newUser.save();
-                console.log('user added successfully');
+                console.log("user added successfully");
             }
             catch (error) {
                 console.error("Registration failed:", error);
@@ -37,17 +37,20 @@ class UserRepository {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const user = yield this.UserModel.findOne({ email: email }).exec();
-                console.log('this is user ', user === null || user === void 0 ? void 0 : user.password, password);
-                const storedHash = user === null || user === void 0 ? void 0 : user.password;
-                if (user && storedHash) {
-                    const isMatch = yield bcryptjs_1.default.compare(password, storedHash);
-                    console.log('login successful');
-                    const token = this.Jwt.generateToken(email);
-                    return isMatch && token ? token : null;
+                if (user) {
+                    const passwordMatch = yield bcryptjs_1.default.compare(password, user.password);
+                    if (passwordMatch) {
+                        console.log('Login successful');
+                        return user;
+                    }
+                    else {
+                        console.log('Password mismatch');
+                        return false;
+                    }
                 }
                 else {
-                    console.log('login failed');
-                    return null;
+                    console.log('User not found');
+                    return false;
                 }
             }
             catch (error) {
@@ -60,9 +63,9 @@ class UserRepository {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const addedCar = this.UserModel.findByIdAndUpdate(userId, addCarDetails);
-                console.log('add car details ', addedCar);
+                console.log("add car details ", addedCar);
                 // await newUser.save();
-                console.log('user added successfully');
+                console.log("user added successfully");
             }
             catch (error) {
                 console.error("Registration failed:", error);
