@@ -24,19 +24,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { formSchema } from "@/components/shared/AddCarFormSchema";
+import { addCarDetails } from "@/lib/actions/addCar.action";
 
-const formSchema = z.object({
-  carName: z
-    .string()
-    .min(2, { message: "Car name must be at least 2 characters." }),
-  type: z.string().optional(),
-  model: z.string().optional(),
-  capacity: z.number().min(4, { message: "Please enter passanger capactiy" }),
-  vehicleNumber: z
-    .string()
-    .min(4, { message: "Vehicle number must be at least 4 characters." }),
-  fuelType: z.enum(["Petrol", "Diesel", "Electric"]), 
-});
+
 
 const page = () => {
   const form = useForm<z.infer<typeof formSchema>>({
@@ -45,15 +36,15 @@ const page = () => {
       carName: "",
       type: "",
       model: "",
-      capacity: 3,
+      capacity: 1,
       vehicleNumber: "",
-      fuelType: "Petrol", // Set default fuel type
+      fuelType: "Petrol",
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Handle form submission here, e.g., send data to a server
-    console.log(values);
+ async function onSubmit(values: z.infer<typeof formSchema>) {
+    console.log("Car details", values);
+   await addCarDetails(values)
   }
 
   return (
@@ -71,7 +62,11 @@ const page = () => {
                 <FormItem className="w-full">
                   <FormLabel>Car Name</FormLabel>
                   <FormControl>
-                    <Input className="bg-gray-900" placeholder="Enter car name" {...field} />
+                    <Input
+                      className="bg-gray-900"
+                      placeholder="Enter car name"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -85,7 +80,11 @@ const page = () => {
                 <FormItem className="w-full">
                   <FormLabel>Type</FormLabel>
                   <FormControl>
-                    <Input className="bg-gray-900" placeholder="Enter car type" {...field} />
+                    <Input
+                      className="bg-gray-900"
+                      placeholder="Enter car type"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -100,7 +99,11 @@ const page = () => {
                 <FormItem className="w-full">
                   <FormLabel>Model</FormLabel>
                   <FormControl>
-                    <Input className="bg-gray-900" placeholder="Enter car model" {...field} />
+                    <Input
+                      className="bg-gray-900"
+                      placeholder="Enter car model"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -115,10 +118,11 @@ const page = () => {
                   <FormLabel>Capacity</FormLabel>
                   <FormControl>
                     <Input
-                    className="bg-gray-900"
                       type="number"
+                      className="bg-gray-900"
                       placeholder="Enter seating capacity"
                       {...field}
+                      onChange={(event) => field.onChange(Number(event.target.value))}
                     />
                   </FormControl>
                   <FormMessage />
@@ -135,7 +139,11 @@ const page = () => {
                 <FormItem className="w-full">
                   <FormLabel>Vehicle Number</FormLabel>
                   <FormControl>
-                    <Input className="bg-gray-900" placeholder="Enter vehicle number" {...field} />
+                    <Input
+                      className="bg-gray-900"
+                      placeholder="Enter vehicle number"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -152,11 +160,10 @@ const page = () => {
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
-                     
                     >
                       <FormControl>
-                        <SelectTrigger  className="bg-gray-900">
-                          <SelectValue   placeholder="Select a verified email to display" />
+                        <SelectTrigger className="bg-gray-900">
+                          <SelectValue placeholder="Select a verified email to display" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -171,7 +178,12 @@ const page = () => {
               )}
             />
           </div>
-          <Button className="bg-gray-100 mt-5 mb-5 text-black rounded-full w-full" type="submit">Add Car</Button>
+          <Button
+            className="bg-gray-100 mt-5 mb-5 text-black rounded-full w-full"
+            type="submit"
+          >
+            Add Car
+          </Button>
         </form>
       </Form>
     </>

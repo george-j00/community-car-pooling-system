@@ -16,10 +16,8 @@ const Header = () => {
             asChild
             className="button rounded-full font-bold border bg-black text-white hover:bg-white hover:text-black hover:border"
           >
-            <Link href="#events">Login / Register</Link>
+            <Link href="#">Login / Register</Link>
           </Button>
-
-      
       </div>
     </div>
   );

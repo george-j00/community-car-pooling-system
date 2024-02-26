@@ -1,19 +1,24 @@
 import { UserCredentials } from "@/types/IFormFields";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
 const baseUrl = "http://localhost:3001/api/auth/register";
 const loginUrl = "http://localhost:3001/api/auth/login";
 const otpUrl = "http://localhost:3001/api/auth/register/send-otp";
+const resendOtpUrl = "http://localhost:3001/api/auth/register/resend-otp";
 
 export const userRegistration = async (credentials: UserCredentials) => {
   try {
     const response = await axios.post(baseUrl, credentials);
     if (response.status === 200) {
       const { email } = credentials;
-      return email; // Return the email upon successful registration
+      return email; 
     }
   } catch (error) {
-    console.error("Error occurred during registration:", error);
+    const axiosError = error as AxiosError;
+    if (axiosError.response) {
+      const errorMessage = axiosError.response.data
+      return errorMessage;
+    }
   }
 };
 
@@ -25,19 +30,37 @@ export const sendOtp = async (email: string, otp: number) => {
 
   try {
     const response = await axios.post(otpUrl, data);
+    console.log("User data from the backend:", response.data);
     if (response.status === 200) {
-      return response;
+      console.log('User data from the backend ',response);
+      return response.data;
     }
   } catch (error) {
-    console.error("Error occured during sending otp :", error);
+    const axiosError = error as AxiosError;
+    if (axiosError.response) {
+      const errorMessage = axiosError.response.data
+      return errorMessage;
+    }
+  }
+};
+
+export const resendOtp = async (email:string) => {
+  try {
+    const data = {
+      email: email,
+    }    
+    await axios.post(resendOtpUrl, data);
+  } catch (error) {
+    console.log('Error on resending otp',error);
   }
 };
 
 type LoginCredentials = {
-    email:string;
-    password:string;
-}
-export const userLogin = async (userData : LoginCredentials) => {
-    const res =  await axios.post(loginUrl , userData);
-    console.log(res);
-}
+  email: string;
+  password: string;
+};
+
+export const userLogin = async (userData: LoginCredentials) => {
+  const res = await axios.post(loginUrl, userData);
+  return res?.data?.token;
+};

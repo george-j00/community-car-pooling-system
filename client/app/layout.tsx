@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
+import StoreProvider from "./StoreProvider";
 
 const inter = Poppins({
   subsets: ["latin"],
@@ -10,7 +11,8 @@ const inter = Poppins({
 
 export const metadata: Metadata = {
   title: "Community car pooling system",
-  description: "Community car pooling application for ride sharing and environment safety",
+  description:
+    "Community car pooling application for ride sharing and environment safety",
 };
 
 export default function RootLayout({
@@ -20,7 +22,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <StoreProvider>{children}</StoreProvider>
+      </body>
     </html>
   );
 }
