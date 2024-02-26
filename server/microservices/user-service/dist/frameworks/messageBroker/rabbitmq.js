@@ -62,6 +62,45 @@ class rabbitmq {
             }
         });
     }
+    checkUserExistence() {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!this.Channel) {
+                yield this.initialize();
+            }
+            if (this.Channel) {
+                const responseQueue = 'response_queue';
+                const requestQueue = 'user_email_check_queue';
+                yield this.Channel.assertQueue(responseQueue, { durable: false });
+                yield this.Channel.assertQueue(requestQueue, { durable: false });
+                this.Channel.consume(requestQueue, (msg) => __awaiter(this, void 0, void 0, function* () {
+                    if (msg !== null && msg.content) {
+                        try {
+                            console.log('Raw user existence email:', msg);
+                            const email = JSON.parse(msg.content.toString());
+                            console.log('Received email :', email);
+                            const existingUser = yield this.userUsecases.checkUserExistence(email);
+                            const correlationId = msg.properties.correlationId;
+                            const responseQueue = msg.properties.replyTo;
+                            if (correlationId && responseQueue) {
+                                const responseMessage = JSON.stringify(existingUser);
+                                yield this.Channel.sendToQueue(responseQueue, Buffer.from(responseMessage), {
+                                    correlationId,
+                                });
+                                console.log('User existence response sent:', responseMessage);
+                            }
+                        }
+                        catch (error) {
+                            console.error('Error parsing user existence message content:', error);
+                            console.log('Raw user existence message content:', msg.content.toString());
+                        }
+                    }
+                }), { noAck: true });
+            }
+            else {
+                console.error("Failed to create a channel");
+            }
+        });
+    }
     userLoginConsumer() {
         return __awaiter(this, void 0, void 0, function* () {
             if (!this.Channel) {

@@ -33,6 +33,7 @@ class UserRouter {
     rabbitMq() {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.consumerMessage.userRegConsumer();
+            yield this.consumerMessage.checkUserExistence();
             yield this.consumerMessage.userLoginConsumer();
         });
     }

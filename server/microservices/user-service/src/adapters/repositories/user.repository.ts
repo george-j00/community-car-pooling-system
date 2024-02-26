@@ -1,5 +1,5 @@
-import { Model } from "mongoose";
 import { IUserSchema } from "../../interfaces/IUserSchema";
+import { Model } from "mongoose";
 import { IUserCase } from "../../interfaces/IUserUsecase";
 import { UserEntity } from "../../domain/entity/user.entity";
 import bcrypt from "bcryptjs";
@@ -16,10 +16,25 @@ export class UserRepository implements IUserCase {
 
   async register(user: UserEntity): Promise<void> {
     try {
+      
       const newUser = new this.UserModel(user, { new: true });
       console.log("this is newuser from rabbitmq ", newUser);
        await newUser.save();
       console.log("user added successfully");
+    } catch (error) {
+      console.error("Registration failed:", error);
+      throw new Error("Registration failed");
+    }
+  }
+  async checkUserExistence(email: string): Promise<any> {
+    try {
+
+      const existingData = await this.UserModel.findOne({ email: email });
+     if (existingData) {
+       console.log("Email already exists");
+      return existingData 
+     }
+     return null;
     } catch (error) {
       console.error("Registration failed:", error);
       throw new Error("Registration failed");

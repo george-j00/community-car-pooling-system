@@ -33,6 +33,22 @@ class UserRepository {
             }
         });
     }
+    checkUserExistence(email) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const existingData = yield this.UserModel.findOne({ email: email });
+                if (existingData) {
+                    console.log("Email already exists");
+                    return existingData;
+                }
+                return null;
+            }
+            catch (error) {
+                console.error("Registration failed:", error);
+                throw new Error("Registration failed");
+            }
+        });
+    }
     login(email, password) {
         return __awaiter(this, void 0, void 0, function* () {
             try {

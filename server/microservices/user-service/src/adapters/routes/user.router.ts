@@ -26,6 +26,7 @@ export class UserRouter {
 
   async rabbitMq() {
     await this.consumerMessage.userRegConsumer();
+    await this.consumerMessage.checkUserExistence();
     await this.consumerMessage.userLoginConsumer();
   }
 }

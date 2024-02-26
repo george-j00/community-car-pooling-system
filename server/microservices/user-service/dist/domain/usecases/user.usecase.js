@@ -8,6 +8,9 @@ class UserUsecase {
     register(user) {
         return this.userRepository.register(user);
     }
+    checkUserExistence(email) {
+        return this.userRepository.checkUserExistence(email);
+    }
     login(email, password) {
         return this.userRepository.login(email, password);
     }

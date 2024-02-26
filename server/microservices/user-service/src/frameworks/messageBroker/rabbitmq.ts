@@ -47,7 +47,45 @@ export class rabbitmq {
               );
             } else {
               console.error("Failed to create a channel");
-            
+        }
+    }
+    async checkUserExistence(){
+        if(!this.Channel){
+            await this.initialize();
+        }
+        if (this.Channel) {
+
+          const responseQueue = 'response_queue'
+          const requestQueue = 'user_email_check_queue'
+
+          await this.Channel.assertQueue(responseQueue, { durable: false });
+          await this.Channel.assertQueue(requestQueue, { durable: false });
+  
+          this.Channel.consume(requestQueue, async (msg : any) => {
+              if (msg !== null && msg.content) {
+                  try {
+                      console.log('Raw user existence email:', msg);
+                      const email = JSON.parse(msg.content.toString());
+                      console.log('Received email :', email);
+                      const existingUser = await this.userUsecases.checkUserExistence(email);
+                      const correlationId = msg.properties.correlationId;
+                      const responseQueue = msg.properties.replyTo;
+  
+                      if (correlationId && responseQueue) {
+                          const responseMessage = JSON.stringify(existingUser);
+                          await this.Channel.sendToQueue(responseQueue, Buffer.from(responseMessage), {
+                              correlationId,
+                          });
+                          console.log('User existence response sent:', responseMessage);
+                      }
+                  } catch (error) {
+                      console.error('Error parsing user existence message content:', error);
+                      console.log('Raw user existence message content:', msg.content.toString());
+                  }
+              }
+          }, { noAck: true });
+        } else {
+            console.error("Failed to create a channel");
         }
     }
 

@@ -10,6 +10,9 @@ export class UserUsecase implements IUserCase{
     register(user: UserEntity): Promise<void> {
       return this.userRepository.register(user);
     }
+    checkUserExistence(email: string): Promise<any> {
+      return this.userRepository.checkUserExistence(email);
+    }
     login(email: string, password: string): Promise<string | null> {
         return this.userRepository.login(email, password);
     }
