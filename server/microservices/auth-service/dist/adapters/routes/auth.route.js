@@ -16,7 +16,7 @@ class AuthRouter {
         this.rabbitMq = new rabbitmq_1.RabbitMQService();
         this.authRepository = new auth_repository_1.AuthRepository(auth_model_1.AuthModel, this.rabbitMq);
         this.authUsecase = new auth_usecase_1.AuthUsecase(this.authRepository, this.rabbitMq, this.jwt);
-        this.authController = new auth_controller_1.AuthController(this.authUsecase);
+        this.authController = new auth_controller_1.AuthController(this.authUsecase, this.rabbitMq);
         this.router.post("/api/auth/register", (req, res) => {
             this.authController.register_user(req, res);
         });

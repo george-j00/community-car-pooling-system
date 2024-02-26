@@ -37,6 +37,39 @@ export class RabbitMQService {
             throw error;
         }
     }
+    async checkUserExistence(email: string) {
+        try {
+
+            const requestQueue = 'user_email_check_queue'
+            const responseQueue = 'response_queue'
+
+            const channel = await this.ensureChannel();
+            const correlationId = this.generateCorrelationId();
+            const message = JSON.stringify(email);
+            await channel?.assertQueue(responseQueue, { durable: false });
+            this.consumeResponseQueue();
+
+            const responsePromise = new Promise<any>((resolve) => {
+                this.correlationIdMap.set(correlationId, resolve);
+            });
+
+            await channel?.assertQueue(requestQueue, { durable: false });
+            channel?.sendToQueue(requestQueue, Buffer.from(message), {
+                correlationId,
+                replyTo: responseQueue,
+            });
+
+            const response = await responsePromise;
+            console.log('Received response:', response);
+            // if (response === 'false') {
+            //     return null;
+            // }
+            return response;
+        } catch (error) {
+            console.error('Error publishing user existence data:', error);
+            throw error;
+        }
+    }
 
     async publishLoginData(loginData: AuthEntity): Promise<any | null> {
         try {
@@ -67,6 +100,8 @@ export class RabbitMQService {
             throw error;
         }
     }
+
+
 
     private generateCorrelationId(): string {
         return Math.random().toString() + Date.now().toString();

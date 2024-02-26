@@ -17,8 +17,9 @@ const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const otp_generator_1 = __importDefault(require("otp-generator"));
 const nodemailer_1 = require("../../frameworks/nodemailer/nodemailer");
 class AuthController {
-    constructor(authUsecase) {
+    constructor(authUsecase, rabbitMq) {
         this.authUsecase = authUsecase;
+        this.rabbitMq = rabbitMq;
         this.login_user = (req, res) => __awaiter(this, void 0, void 0, function* () {
             try {
                 const { email, password } = req.body;
@@ -62,13 +63,20 @@ class AuthController {
                     password: hashedPassword,
                     otp: OTP,
                 };
-                yield (0, nodemailer_1.sendEmail)(email, OTP);
-                yield this.authUsecase.register(payload);
-                res.status(200).send('otp sent successfully');
+                const userExist = yield this.rabbitMq.checkUserExistence(email);
+                if (userExist === "null") {
+                    yield (0, nodemailer_1.sendEmail)(email, OTP);
+                    yield this.authUsecase.register(payload);
+                    res.status(200).json({ message: "OTP sent successfully" });
+                }
+                else {
+                    console.log('User already registered');
+                    res.status(400).json({ message: "User already registered" });
+                }
             }
             catch (error) {
-                res.status(500).send("Error while sending the otp");
-                console.log("Error while adding => ", error);
+                console.error("Error while registering user:", error);
+                res.status(500).json({ message: "Error while registering user" });
             }
         });
     }
@@ -77,11 +85,11 @@ class AuthController {
             try {
                 const { email, otp } = req.body;
                 const userData = yield this.authUsecase.validateOtp(email, otp);
-                console.log('userDAta is sent to client ', userData);
+                console.log("userDAta is sent to client ", userData);
                 res.status(200).json({ user: userData });
             }
             catch (error) {
-                res.status(401).send('otp validation failed');
+                res.status(401).json({ message: "OTP validation failed" });
             }
         });
     }
@@ -90,14 +98,14 @@ class AuthController {
             try {
                 const { email } = req.body;
                 const otp = yield this.otpGenerator();
-                console.log('resened', email, otp);
+                console.log("resened", email, otp);
                 yield (0, nodemailer_1.sendEmail)(email, otp);
                 yield this.authUsecase.resendOtp(email, otp);
-                console.log('otp resend succssfull ');
-                // res.status(200); 
+                console.log("otp resend succssfull ");
+                res.status(200);
             }
             catch (error) {
-                res.status(401).send('otp validation failed');
+                res.status(401).send("otp validation failed");
             }
         });
     }

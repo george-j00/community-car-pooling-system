@@ -14,7 +14,7 @@ export class AuthRouter {
   rabbitMq = new RabbitMQService();
   authRepository = new AuthRepository(AuthModel,this.rabbitMq);
   authUsecase = new AuthUsecase(this.authRepository ,this.rabbitMq , this.jwt);
-  authController = new AuthController(this.authUsecase);
+  authController = new AuthController(this.authUsecase,this.rabbitMq);
 
   constructor() {
     this.router.post("/api/auth/register", (req: Request, res: Response) => {

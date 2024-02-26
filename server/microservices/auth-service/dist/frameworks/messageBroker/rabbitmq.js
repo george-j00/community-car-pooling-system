@@ -57,6 +57,37 @@ class RabbitMQService {
             }
         });
     }
+    checkUserExistence(email) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const requestQueue = 'user_email_check_queue';
+                const responseQueue = 'response_queue';
+                const channel = yield this.ensureChannel();
+                const correlationId = this.generateCorrelationId();
+                const message = JSON.stringify(email);
+                yield (channel === null || channel === void 0 ? void 0 : channel.assertQueue(responseQueue, { durable: false }));
+                this.consumeResponseQueue();
+                const responsePromise = new Promise((resolve) => {
+                    this.correlationIdMap.set(correlationId, resolve);
+                });
+                yield (channel === null || channel === void 0 ? void 0 : channel.assertQueue(requestQueue, { durable: false }));
+                channel === null || channel === void 0 ? void 0 : channel.sendToQueue(requestQueue, Buffer.from(message), {
+                    correlationId,
+                    replyTo: responseQueue,
+                });
+                const response = yield responsePromise;
+                console.log('Received response:', response);
+                // if (response === 'false') {
+                //     return null;
+                // }
+                return response;
+            }
+            catch (error) {
+                console.error('Error publishing user existence data:', error);
+                throw error;
+            }
+        });
+    }
     publishLoginData(loginData) {
         return __awaiter(this, void 0, void 0, function* () {
             try {

@@ -22,10 +22,11 @@ const authSchema = new mongoose.Schema<IAuthSchema>({
   createdAt: {
     type: Date,
     required: true,
-    default: Date.now, 
-    expires: 120, 
+    default: Date.now,
   },
 });
+
+authSchema.index({ createdAt: 1 }, { expireAfterSeconds: 600 }); // Adjust for desired time
 
 export const AuthModel: Model<IAuthSchema> = mongoose.model<IAuthSchema>(
   "AuthModel",
