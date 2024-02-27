@@ -61,6 +61,16 @@ type LoginCredentials = {
 };
 
 export const userLogin = async (userData: LoginCredentials) => {
-  const res = await axios.post(loginUrl, userData);
-  return res?.data?.token;
+  try {
+    const response = await axios.post(loginUrl, userData);
+    if (response.status === 200) {
+      return response?.data
+    }
+  } catch (error) {
+    const axiosError = error as AxiosError;
+    if (axiosError.response) {
+      return "Invalid login credentials";
+    }
+  }
+
 };

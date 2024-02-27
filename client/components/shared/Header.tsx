@@ -1,9 +1,27 @@
+'use client'
+
+
 import React from "react";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import NavigationItems from "./NavigationItems";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks";
+import { setLogout } from "@/lib/features/auth/authSlice";
 
 const Header = () => {
+
+  const user = useAppSelector(state => state?.auth?.user);
+  const dispatch = useAppDispatch()
+
+  if (user) {
+    const userWithUsername = user as { username: string,email:string };
+    console.log(userWithUsername.email);
+  } 
+
+  const handleLogout = () => {
+    dispatch(setLogout())
+  }
+  
   return (
     <div className="bg-black text-white">
       <div className="wrapper flex justify-between">
@@ -16,9 +34,12 @@ const Header = () => {
             asChild
             className="button rounded-full font-bold border bg-black text-white hover:bg-white hover:text-black hover:border"
           >
-            <Link href="#">Login / Register</Link>
+           {
+            user ? <button onClick={handleLogout}><Link href="">Logout</Link></button> : <Link href="/login">Login</Link>
+           } 
+
           </Button>
-      </div>
+      </div> 
     </div>
   );
 };

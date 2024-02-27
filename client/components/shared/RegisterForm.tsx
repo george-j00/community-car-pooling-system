@@ -16,11 +16,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { loginFormSchema, registerFormSchema } from "@/lib/validator";
 import { userLogin, userRegistration } from "@/lib/actions/auth.action";
-import jwt, { JwtPayload } from "jsonwebtoken";
+import { useState } from "react";
 import { useAppDispatch } from "@/lib/hooks";
 import { setLogin } from "@/lib/features/auth/authSlice";
+import { Router } from "next/router";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 
 const RegisterForm = ({
   formFields,
@@ -36,7 +36,11 @@ const RegisterForm = ({
     defaultValues: initialValues,
   });
 
-  const [error, setError] = useState(false);
+  const [signInError, setSignInError] = useState(false);
+  const [loginError, setLoginError] = useState(false);
+
+  const dispatch = useAppDispatch()
+  const router = useRouter()
 
   const formSchema = type === "Register" ? registerFormSchema : loginFormSchema;
 
@@ -47,33 +51,27 @@ const RegisterForm = ({
       const response = await userRegistration(values);
       if (typeof response === "string") {
         console.log("Email:", response);
-        setError(false);
+        setSignInError(false);
         setIsOtpAvail(true);
         setEmail(response);
       } else {
-       setError(true);
+        setSignInError(true);
       }
     }
-    // const router = useRouter()
-    // const dispatch = useAppDispatch()
 
     if (type === "Login") {
       console.log("this is login values ", values);
-      const token = await userLogin(values);
-      const decodedToken = jwt.decode(token);
-      console.log("decoded token ", decodedToken);
-      if (decodedToken && typeof decodedToken === "object") {
-        // const userPayload = {
-        //   email: (decodedToken as JwtPayload)?.email,
-        //   username: (decodedToken as JwtPayload)?.username
-        // };
-        // dispatch(setLogin({
-        //   user: userPayload,
-        //   token: token
-        // }));
-        // router.push("/")
+      const response = await userLogin(values);
+      if (typeof response === "string") {
+        //got error
+        setLoginError(true);
       } else {
-        console.error("Failed to decode JWT token");
+        setLoginError(false);
+        dispatch(setLogin({
+          user:response?.data,
+          token:response?.token
+        }))
+        router.push('/');
       }
     }
   };
@@ -102,9 +100,16 @@ const RegisterForm = ({
               />
             </div>
           ))}
-          {
-            error ? <p className="flex text-sm justify-center text-red-600">Email already exists</p> : null 
-          }
+          {signInError ? (
+            <p className="flex text-sm justify-center text-red-600">
+              Email already exists
+            </p>
+          ) : null}
+          {loginError ? (
+            <p className="flex text-sm justify-center text-red-600">
+              Invalid credentials
+            </p>
+          ) : null}
           <Button type="submit" className="w-full mt-5">
             {type === "Register" ? "Register" : "Login"}
           </Button>

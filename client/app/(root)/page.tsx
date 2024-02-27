@@ -1,8 +1,11 @@
 import { Button } from "@/components/ui/button";
+import { useAppSelector } from "@/lib/hooks";
 import Image from "next/image";
 import Link from "next/link";
 
 export default function Home() {
+
+
   return (
     <>
     <section className="bg-black text-white bg-contain md:py-10 w-full h-full">
