@@ -13,10 +13,7 @@ const Header = () => {
   const user = useAppSelector(state => state?.auth?.user);
   const dispatch = useAppDispatch()
 
-  if (user) {
-    const userWithUsername = user as { username: string,email:string };
-    console.log(userWithUsername.email);
-  } 
+ 
 
   const handleLogout = () => {
     dispatch(setLogout())

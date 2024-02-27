@@ -29,6 +29,7 @@ const RegisterForm = ({
   setIsOtpAvail,
   setEmail,
 }: RegisterFormProps) => {
+  
   const form = useForm({
     resolver: zodResolver(
       type === "Register" ? registerFormSchema : loginFormSchema
