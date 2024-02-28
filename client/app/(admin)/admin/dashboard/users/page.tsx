@@ -1,8 +1,11 @@
+import { UserManagement } from '@/components/shared/UserManagement'
 import React from 'react'
 
 const Users = () => {
   return (
-    <div>Users</div>
+    <>
+      <UserManagement />
+    </>
   )
 }
 

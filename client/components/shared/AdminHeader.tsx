@@ -26,7 +26,7 @@ const AdminHeader = () => {
         <h1 className="text-xl mt-2">GoPool</h1>
         <h1 className="font-bold text-3xl mt-7 mb-5">Admin Dashboard</h1>
         <Button variant={"outline"} size="lg" asChild className="button bg-black rounded-full w-1/8 font-bold text-white  hover:border">
-            <Link href="#events">Logout</Link>
+            <Link href="/admin/login">Login</Link>
           </Button>
       </div> 
     </div>

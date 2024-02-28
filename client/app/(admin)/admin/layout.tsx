@@ -8,10 +8,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="flex flex-col h-screen">
-      <AdminHeader />
+    <div className="flex flex-col h-screen ">
       <main className="flex-1">{children}</main>
-      <Footer />
     </div>
   );
 }
