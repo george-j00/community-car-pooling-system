@@ -19,6 +19,12 @@ export class UserUsecase implements IUserCase{
     add_car(userId : string ,addCarData: UserEntity): Promise<void> {
       return this.userRepository.add_car(userId, addCarData);
     }
+    getAllUsers(): Promise<any> {
+      return this.userRepository.getAllUsers();
+    }
+    banUser(userId : string): Promise<any> {
+      return this.userRepository.banUser(userId);
+    }
  
 
 }   

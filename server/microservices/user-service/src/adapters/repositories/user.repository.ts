@@ -76,4 +76,29 @@ export class UserRepository implements IUserCase {
       throw new Error("Registration failed");
     }
   }
-}
+  async getAllUsers(): Promise<any> {
+    try {
+      const allUsers =await this.UserModel.find({},{password:0});
+      console.log("get all user details ", allUsers);
+      return allUsers
+    } catch (error) {
+      console.error("Fetching all users failed:", error);
+      throw new Error("Error while fetching all users");
+    }
+  }
+
+  async banUser(userId : string) : Promise<any> {
+    try {
+      const banUser : IUserSchema | null = await this.UserModel.findById(userId);
+      if (banUser) {
+        banUser.status = banUser.status === "active" ? "banned" : "active";
+      }
+     const newUser =  await banUser?.save()
+      console.log('User ban/unblock success',newUser);
+      return newUser?.status
+    } catch (error) {
+      console.error("Error while banning user:", error);
+      throw new Error("Error while banning user");
+    }
+  }
+} 

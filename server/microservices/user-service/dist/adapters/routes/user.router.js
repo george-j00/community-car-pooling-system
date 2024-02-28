@@ -29,6 +29,12 @@ class UserRouter {
         this.router.post("/api/user/add-car", (req, res) => {
             this.userController.add_car(req, res);
         });
+        this.router.get("/api/users/getAllUsers", (req, res) => {
+            this.userController.getAllUsers(req, res);
+        });
+        this.router.post("/api/users/banUser", (req, res) => {
+            this.userController.banUser(req, res);
+        });
     }
     rabbitMq() {
         return __awaiter(this, void 0, void 0, function* () {

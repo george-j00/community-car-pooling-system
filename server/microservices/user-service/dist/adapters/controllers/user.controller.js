@@ -19,11 +19,39 @@ class UserController {
             try {
                 const { userId, addCarDetails } = req.body;
                 yield this.userUsecase.add_car(userId, addCarDetails);
-                res.status(200).send('Address added successfully');
+                res.status(200).send("Address added successfully");
             }
             catch (error) {
-                res.status(500).send('Error while adding address');
-                console.log('Error while adding => ', error);
+                res.status(500).send("Error while adding address");
+                console.log("Error while adding => ", error);
+            }
+        });
+    }
+    getAllUsers(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const users = yield this.userUsecase.getAllUsers();
+                res.status(200).json({ users });
+            }
+            catch (error) {
+                res.status(500).send("Error while adding address");
+                console.log("Error while adding => ", error);
+            }
+        });
+    }
+    banUser(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { userId } = req.body;
+                console.log(userId);
+                const response = yield this.userUsecase.banUser(userId);
+                if (response) {
+                    res.status(200).json({ updated: response });
+                }
+            }
+            catch (error) {
+                res.status(500).send("Error while adding address");
+                console.log("Error while adding => ", error);
             }
         });
     }

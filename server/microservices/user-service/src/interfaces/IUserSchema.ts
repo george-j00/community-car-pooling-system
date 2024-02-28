@@ -5,6 +5,7 @@ export interface IUserSchema extends Document {
   username: string;
   email: string;
   password: string;
+  status:"active"| "banned"
   car: {
     carName: string;
     type: string;

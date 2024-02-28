@@ -89,5 +89,35 @@ class UserRepository {
             }
         });
     }
+    getAllUsers() {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const allUsers = yield this.UserModel.find({}, { password: 0 });
+                console.log("get all user details ", allUsers);
+                return allUsers;
+            }
+            catch (error) {
+                console.error("Fetching all users failed:", error);
+                throw new Error("Error while fetching all users");
+            }
+        });
+    }
+    banUser(userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const banUser = yield this.UserModel.findById(userId);
+                if (banUser) {
+                    banUser.status = banUser.status === "active" ? "banned" : "active";
+                }
+                const newUser = yield (banUser === null || banUser === void 0 ? void 0 : banUser.save());
+                console.log('User ban/unblock success', newUser);
+                return newUser === null || newUser === void 0 ? void 0 : newUser.status;
+            }
+            catch (error) {
+                console.error("Error while banning user:", error);
+                throw new Error("Error while banning user");
+            }
+        });
+    }
 }
 exports.UserRepository = UserRepository;

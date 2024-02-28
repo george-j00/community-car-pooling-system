@@ -22,6 +22,14 @@ export class UserRouter {
         this.userController.add_car(req, res);
       }
     );
+    this.router.get("/api/users/getAllUsers",(req: Request, res: Response) => {
+        this.userController.getAllUsers(req, res);
+      }
+    );
+    this.router.post("/api/users/banUser",(req: Request, res: Response) => {
+        this.userController.banUser(req, res);
+      }
+    );
   }
 
   async rabbitMq() {

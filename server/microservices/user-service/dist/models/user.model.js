@@ -20,12 +20,17 @@ const userSchema = new mongoose_1.default.Schema({
         required: true,
     },
     car: {
-        carName: { type: String, required: true },
+        carName: { type: String },
         type: { type: String },
         model: { type: String },
         capacity: { type: Number, min: 1, max: 6 },
         vehicleNumber: { type: String, minlength: 4 },
         fuelType: { type: String, enum: ["Petrol", "Diesel", "Electric"] },
+    },
+    status: {
+        type: String,
+        enum: ["active", "banned"],
+        default: "active",
     },
 });
 exports.UserModel = mongoose_1.default.model("UserModel", userSchema);

@@ -17,5 +17,11 @@ class UserUsecase {
     add_car(userId, addCarData) {
         return this.userRepository.add_car(userId, addCarData);
     }
+    getAllUsers() {
+        return this.userRepository.getAllUsers();
+    }
+    banUser(userId) {
+        return this.userRepository.banUser(userId);
+    }
 }
 exports.UserUsecase = UserUsecase;

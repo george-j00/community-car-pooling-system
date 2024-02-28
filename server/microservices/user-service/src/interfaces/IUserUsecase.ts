@@ -6,4 +6,6 @@ export interface IUserCase {
   register(user: UserEntity): Promise<void>;
   login(email : string , password : string ): Promise<any>;
   checkUserExistence(email : string): Promise<any>;
+  getAllUsers(): Promise<any>;
+  banUser(userId : string): Promise<any>;
 }
