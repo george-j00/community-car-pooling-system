@@ -26,10 +26,32 @@ import {
 } from "@/components/ui/select";
 import { formSchema } from "@/components/shared/AddCarFormSchema";
 import { addCarDetails } from "@/lib/actions/addCar.action";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks";
+import axios from "axios";
+import { setLogout } from "@/lib/features/auth/authSlice";
+import { useRouter } from "next/navigation";
+import { useToast } from "@/components/ui/use-toast"
+import { getCookie } from "@/lib/actions/auth";
 
 
+const page =  () => {
+  const router = useRouter()
+  const dispatch = useAppDispatch()
+  const { toast } = useToast()
 
-const page = () => {
+  let userId  = "";
+
+  const user = useAppSelector((state) => state?.auth?.user);
+ 
+
+  if (user) {
+    const userWithUsername = user as {
+      _id: string;
+    };
+
+    userId = userWithUsername?._id;
+  }
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -43,8 +65,39 @@ const page = () => {
   });
 
  async function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log("Car details", values);
-   await addCarDetails(values)
+
+    const token = await getCookie()
+
+    try {    
+    if (token) {
+     const resStatus =  await addCarDetails(values,userId,token)
+     console.log(resStatus);
+     
+     if (resStatus === 401 ) {
+      console.log('res status',resStatus);
+      toast({
+        variant:"destructive",
+        description: "Access denied , please login again",
+      })
+      router.push('/login')
+     }
+     if (resStatus === 200) { 
+      console.log('car updated successfully');
+      toast({
+        description: "Car data added successfully",
+      })
+      form.reset();
+     }
+    }
+
+  } catch (error) {
+    if (error instanceof Error && error.message.includes('401')) {
+        // setError('Unauthorized. Please login again.');
+        router.push('/login'); // Redirect to login page
+      } else {
+        // setError(error.message); // Handle other errors
+      }
+  }
   }
 
   return (

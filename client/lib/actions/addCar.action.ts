@@ -1,4 +1,7 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
+import { useAppDispatch, useAppSelector, useAppStore } from "../hooks";
+import { setLogout } from "../features/auth/authSlice";
+import setupInterceptors from "../axios";
 
 
 type carDataParams = {
@@ -10,16 +13,22 @@ type carDataParams = {
   fuelType: "Petrol" | "Diesel" | "Electric";
 };
 
-const baseUrl = "http://localhost:3002/api/user/add-car";
-export const addCarDetails = async (addCarDetails: carDataParams) => {
+const baseUrl = "http://localhost:8080/api/users/add-car";
+
+export const addCarDetails = async (addCarDetails: carDataParams , userId : string, token:string) => {
   try {
-    
-    await axios.post(baseUrl, addCarDetails);
-    //   if (response.status === 200) {
-    //     const { email } = credentials;
-    //     return email; // Return the email upon successful registration
-    //   }
+    const payload = {
+      carData : addCarDetails , 
+      userId:userId,
+    }
+    await setupInterceptors(token)
+    const response = await axios.post(baseUrl, payload);
+    return response?.status
   } catch (error) {
-    console.error("Error occurred during registration:", error);
+    const axiosError = error as AxiosError;
+    if (axiosError.response) {
+      const status = axiosError.response.status;
+      return status
+    }
   }
 };

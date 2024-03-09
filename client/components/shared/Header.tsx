@@ -7,15 +7,17 @@ import Link from "next/link";
 import NavigationItems from "./NavigationItems";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { setLogout } from "@/lib/features/auth/authSlice";
+import { deleteCookie } from "@/lib/actions/auth";
 
 const Header = () => {
 
   const user = useAppSelector(state => state?.auth?.user);
   const dispatch = useAppDispatch()
-
+  
  
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await deleteCookie()
     dispatch(setLogout())
   }
   

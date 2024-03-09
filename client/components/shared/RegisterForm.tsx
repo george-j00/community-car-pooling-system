@@ -21,6 +21,7 @@ import { useAppDispatch } from "@/lib/hooks";
 import { setLogin } from "@/lib/features/auth/authSlice";
 import { Router } from "next/router";
 import { useRouter } from "next/navigation";
+import { setCookie } from "@/lib/actions/auth";
 
 const RegisterForm = ({
   formFields,
@@ -70,10 +71,11 @@ const RegisterForm = ({
         setLoginError(false);
         dispatch(setLogin({
           user:response?.data,
-          token:response?.token
+          isLoggedIn: true
         }))
-        router.push('/');
-      }
+        await setCookie(response?.token,)
+        router.push('/')
+      } 
     }
   };
 
