@@ -4,6 +4,7 @@ import { IUserCase } from "../../interfaces/IUserUsecase";
 import { UserEntity } from "../../domain/entity/user.entity";
 import bcrypt from "bcryptjs";
 import { JwtService } from "../../frameworks/jwt/jwt";
+import { UserModel } from "../../models/user.model";
 
 export class UserRepository implements IUserCase {
   private readonly UserModel: Model<IUserSchema>;
@@ -66,12 +67,16 @@ export class UserRepository implements IUserCase {
   }
 
   async add_car(userId: string, addCarDetails: UserEntity): Promise<void> {
-    try {
-      const addedCar = this.UserModel.findByIdAndUpdate(userId, addCarDetails);
-      console.log("add car details ", addedCar);
-      // await newUser.save();
-      console.log("user added successfully");
-    } catch (error) {
+    try {    
+      UserModel.findByIdAndUpdate(userId, { $set: { car: addCarDetails } })
+      .then(updatedUser => {
+        if (updatedUser) {
+          console.log("User car details updated successfully!");
+        } else {
+          console.log("User not found or update failed!");
+        }
+      })
+    } catch (error) { 
       console.error("Registration failed:", error);
       throw new Error("Registration failed");
     }

@@ -26,7 +26,7 @@ class UserRouter {
         this.userUsecase = new user_usecase_1.UserUsecase(this.userRepository);
         this.consumerMessage = new rabbitmq_1.rabbitmq(this.userUsecase);
         this.userController = new user_controller_1.UserController(this.userUsecase);
-        this.router.post("/api/user/add-car", (req, res) => {
+        this.router.post("/api/users/add-car", (req, res) => {
             this.userController.add_car(req, res);
         });
         this.router.get("/api/users/getAllUsers", (req, res) => {

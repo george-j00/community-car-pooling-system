@@ -10,7 +10,7 @@ const rabbitmq_1 = require("../../frameworks/messageBroker/rabbitmq");
 const jwt_1 = require("../../frameworks/jwt/jwt");
 class AuthRouter {
     constructor() {
-        this.secret_key = "secret_key";
+        this.secret_key = "JWT_SECRET_KEY";
         this.jwt = new jwt_1.JwtService(this.secret_key);
         this.router = (0, express_1.Router)();
         this.rabbitMq = new rabbitmq_1.RabbitMQService();

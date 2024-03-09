@@ -87,10 +87,10 @@ async register_user(req: Request, res: Response) {
     try {
       const { email, password } = req.body;
 
-      const token = await this.authUsecase.login(email, password);
+      const {token , data } = await this.authUsecase.login(email, password);
 
       if (token !== null) {
-        res.status(200).json({ token });
+        res.status(200).json({ token , data });
       } else {
         res.status(401).json({ error: "Login failed" });
         console.log("Login failed for user:", email);

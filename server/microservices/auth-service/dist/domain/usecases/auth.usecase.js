@@ -47,7 +47,7 @@ class AuthUsecase {
                 };
                 console.log(userData);
                 const token = this.jwt.generateToken(userData);
-                return token;
+                return { token, data };
             }
         });
     }

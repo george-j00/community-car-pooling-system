@@ -18,7 +18,7 @@ export class UserRouter {
   userController = new UserController(this.userUsecase);
     
   constructor() {
-    this.router.post("/api/user/add-car",(req: Request, res: Response) => {
+    this.router.post("/api/users/add-car",(req: Request, res: Response) => {
         this.userController.add_car(req, res);
       }
     );

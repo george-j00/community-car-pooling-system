@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserRepository = void 0;
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
+const user_model_1 = require("../../models/user.model");
 class UserRepository {
     constructor(UserModel, Jwt) {
         this.UserModel = UserModel;
@@ -78,10 +79,15 @@ class UserRepository {
     add_car(userId, addCarDetails) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const addedCar = this.UserModel.findByIdAndUpdate(userId, addCarDetails);
-                console.log("add car details ", addedCar);
-                // await newUser.save();
-                console.log("user added successfully");
+                user_model_1.UserModel.findByIdAndUpdate(userId, { $set: { car: addCarDetails } })
+                    .then(updatedUser => {
+                    if (updatedUser) {
+                        console.log("User car details updated successfully!");
+                    }
+                    else {
+                        console.log("User not found or update failed!");
+                    }
+                });
             }
             catch (error) {
                 console.error("Registration failed:", error);

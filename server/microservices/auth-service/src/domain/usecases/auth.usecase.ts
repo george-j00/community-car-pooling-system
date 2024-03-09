@@ -19,7 +19,7 @@ export class AuthUsecase implements IAuthUsecase {
         return this.authRepository.resendOtp(email,otp);
     }
       
-    async login(email: string, password: string): Promise<string> {
+    async login(email: string, password: string): Promise<any> {
       const userLogin = {
           email: email,
           password: password
@@ -42,7 +42,7 @@ export class AuthUsecase implements IAuthUsecase {
           };
           console.log(userData);
           const token = this.jwt.generateToken(userData);
-          return token;
+          return { token , data };
       }
   }
   

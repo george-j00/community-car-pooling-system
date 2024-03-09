@@ -9,8 +9,8 @@ export class UserController {
 
   async add_car(req: Request, res: Response) {
     try {
-      const { userId, addCarDetails } = req.body;
-      await this.userUsecase.add_car(userId, addCarDetails);
+      const { carData, userId } = req.body;
+      await this.userUsecase.add_car(userId, carData);
       res.status(200).send("Address added successfully");
     } catch (error) {
       res.status(500).send("Error while adding address");

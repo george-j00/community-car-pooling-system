@@ -64,7 +64,7 @@ export class AuthRepository implements IAuthUsecase {
     }
   }
 
-  login(email: string, password: string): Promise<string> {
+  login(email: string, password: string): Promise<any> {
     throw new Error("Method not implemented.");
   }
 }

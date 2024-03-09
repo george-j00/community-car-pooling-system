@@ -17,12 +17,6 @@ const port = process.env.PORT;
 userRouterObj.rabbitMq();
 app.use((0, cookie_parser_1.default)());
 app.use((0, cors_1.default)());
-app.use((req, res, next) => {
-    res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-    res.setHeader("Pragma", "no-cache");
-    res.setHeader("Expires", "0");
-    next();
-});
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: false }));
 app.use(user_router_1.userRouter);

@@ -6,15 +6,22 @@ admin:
 apiEndpoints:
   api:
     host: localhost
-    paths: '/ip'
+    paths: "/ip"
   auth:
     host: localhost
-    paths: ['/api/auth','/api/auth/*']
+    paths: ["/api/auth", "/api/auth/*"]
+  user:
+    host: localhost
+    paths: ["/api/users", "/api/users/*"]
+
 serviceEndpoints:
   httpbin:
-    url: 'https://httpbin.org'
+    url: "https://httpbin.org"
   authService:
-    url: 'http://localhost:3001'
+    url: "http://localhost:3001"
+  userService:
+    url: "http://localhost:3002"
+
 policies:
   - basic-auth
   - cors
@@ -24,24 +31,79 @@ policies:
   - oauth2
   - proxy
   - rate-limit
+  - jwt
+  # - jwt:
+  #   secretOrPrivateKeyFile: JWT-SECRET-KEY # Path to your JWT secret or public key file
+  #   algorithms: ["RS256"] # Algorithm(s) used for signing the JWT (adjust if needed)
+  #   tokenIn: # Optional: Where to look for the JWT token in the request (default: 'headers')
+  #     header: "Authorization" # Example: Look for the token in the 'Authorization' header
+  #     scheme: "Bearer "
+  - request-transformer 
+
 pipelines:
   default:
-    apiEndpoints:
+    apiEndpoints: 
       - api
     policies:
-    # Uncomment `key-auth:` when instructed to in the Getting Started guide.
-    # - key-auth:
+      # Uncomment `key-auth:` when instructed to in the Getting Started guide.
+      # - key-auth:
       - proxy:
           - action:
-              serviceEndpoint: httpbin 
+              serviceEndpoint: httpbin
               changeOrigin: true
   authPipeline:
     apiEndpoints:
       - auth
     policies:
-    # Uncomment `key-auth:` when instructed to in the Getting Started guide.
-    # - key-auth:
+      # Uncomment `key-auth:` when instructed to in the Getting Started guide.
+      # - key-auth:
       - proxy:
-          - action: 
+          - action:
               serviceEndpoint: authService
+              changeOrigin: true
+
+  userPipeline:
+    apiEndpoints:
+      - user
+    policies:
+      - cors:
+          - action:
+              origin: "*"
+              credentials: true
+              methods:  GET,POST,PUT,DELETE,OPTIONS
+              allowedHeaders:
+                [
+                  "Authorization",
+                  "Content-type",
+                  "Origin",
+                  "Access-Control-Allow-Origin",
+                  "Accept",
+                  "Options",
+                  "Access-Control-Request-Headers",
+                  "Access-Control-Request-Method",
+                ]
+              exposedHeaders:
+                [
+                  "Content-type",
+                  "Origin",
+                  "Access-Control-Allow-Origin",
+                  "Accept",
+                  "Options",
+                  "Access-Control-Request-Headers",
+                  "Access-Control-Request-Method",
+                ]
+              preflightContinue: false
+              optionsSuccessStatus: 204
+      - jwt:
+          action:
+            secretOrPublicKey: JWT_SECRET_KEY
+            checkCredentialExistence: false
+      - request-transformer:
+          action:
+            body:
+              add:
+                user: req.user
+      - proxy:    
+          - action:
+              serviceEndpoint: userService
               changeOrigin: true

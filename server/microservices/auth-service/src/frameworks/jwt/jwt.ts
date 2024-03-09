@@ -7,8 +7,8 @@ export class JwtService {
     this.secretKey = secretKey;
   }
   
-  generateToken(email: string): string {
-    return jwt.sign({email}, this.secretKey, { expiresIn: '15m' });
+  generateToken(userData: any): string {
+    return jwt.sign({userData}, this.secretKey, { expiresIn: '15m' });
   }
   
   verifyToken(token: string): any {

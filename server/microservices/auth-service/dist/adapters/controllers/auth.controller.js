@@ -23,9 +23,9 @@ class AuthController {
         this.login_user = (req, res) => __awaiter(this, void 0, void 0, function* () {
             try {
                 const { email, password } = req.body;
-                const token = yield this.authUsecase.login(email, password);
+                const { token, data } = yield this.authUsecase.login(email, password);
                 if (token !== null) {
-                    res.status(200).json({ token });
+                    res.status(200).json({ token, data });
                 }
                 else {
                     res.status(401).json({ error: "Login failed" });

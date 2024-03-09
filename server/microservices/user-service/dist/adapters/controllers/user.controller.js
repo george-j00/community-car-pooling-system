@@ -17,8 +17,8 @@ class UserController {
     add_car(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const { userId, addCarDetails } = req.body;
-                yield this.userUsecase.add_car(userId, addCarDetails);
+                const { carData, userId } = req.body;
+                yield this.userUsecase.add_car(userId, carData);
                 res.status(200).send("Address added successfully");
             }
             catch (error) {

@@ -8,7 +8,7 @@ import { JwtService } from "../../frameworks/jwt/jwt";
 
 export class AuthRouter {
 
-  secret_key = "secret_key";
+  secret_key = "JWT_SECRET_KEY";
   jwt = new JwtService(this.secret_key)
   router = Router();
   rabbitMq = new RabbitMQService();
