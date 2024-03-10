@@ -38,10 +38,10 @@ export const updateProfile = async (data: any , token : string, userId:string) =
     const payload = {
       data : data , 
       userId:userId,
-    }
+    }    
     await setupInterceptors(token)
-    const response = await axios.post(baseUrl, payload);
-    return response?.status
+    const response = await axios.post(baseUrl2, payload);
+    return response?.data
   } catch (error) {
     const axiosError = error as AxiosError;
     if (axiosError.response) {

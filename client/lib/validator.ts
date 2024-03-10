@@ -16,7 +16,7 @@ export const adminLoginFormSchema = z.object({
 export const updateProfileFormSchema = z.object({
   username: z.string().trim().min(3, "Username must be at least 3 characters"),
   email: z.string().trim().email("Invalid email format"),
-  phone: z
+  phoneNumber: z
   .string()
   .refine((value) => /^\d{10}$/.test(value), { message: "Invalid phone number format. Must be 10 digits" }),
   // imageUrl: z.string(),  // Add if needed

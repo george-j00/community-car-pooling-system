@@ -28,28 +28,40 @@ import { useForm } from "react-hook-form";
 import { number, z } from "zod";
 import { updateProfileFormSchema } from "@/lib/validator";
 import { updateProfileFormDefaultValues } from "@/constants";
-import { useAppSelector } from "@/lib/hooks";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { getCookie } from "@/lib/actions/auth";
 import { updateProfile } from "@/lib/actions/addCar.action";
+import { updateProfileReducer } from "@/lib/features/auth/authSlice";
 
 const EditProfileDialogBox = () => {
+  const dispatch = useAppDispatch();
   const [activeStep, setActiveStep] = useState(0); // Track active step
 
-  const existingUser : any = useAppSelector((state) => state?.auth?.user)
+  const existingUser: any = useAppSelector((state) => state?.auth?.user);
 
-  const { car, ...otherUserDetails } = existingUser;
+  // const { car, ...otherUserDetails } = existingUser;
 
-const {carName ,carModel, carType , carCapacity , fuelType , vehicleNumber } = car
+  // const { carName, model, type, capacity, fuelType, vehicleNumber } = car;
 
-const flattenedUserData = {
-  ...otherUserDetails,
-  carName,
-  carModel,
-  carType,
-  carCapacity,
-  fuelType,
-  vehicleNumber
-};
+  // const flattenedUserData = {
+  //   ...otherUserDetails,
+  //   carName,
+  //   carModel: model,
+  //   carType: type,
+  //   carCapacity: capacity,
+  //   fuelType,
+  //   vehicleNumber,
+  // };
+
+  const flattenedUserData = {
+    ...existingUser,
+    carName: existingUser?.car?.carName,
+    carModel: existingUser?.car?.model,
+    carType: existingUser?.car?.type,
+    carCapacity: existingUser?.car?.capacity,
+    fuelType: existingUser?.car?.fuelType,
+    vehicleNumber: existingUser?.car?.vehicleNumber,
+  };
 
   const handleNext = () => {
     if (activeStep < 2) {
@@ -62,26 +74,28 @@ const flattenedUserData = {
       setActiveStep(activeStep - 1);
     }
   };
-  const initialValues = existingUser ? flattenedUserData : updateProfileFormDefaultValues
+  const initialValues = existingUser
+    ? flattenedUserData
+    : updateProfileFormDefaultValues;
 
   const form = useForm<z.infer<typeof updateProfileFormSchema>>({
     resolver: zodResolver(updateProfileFormSchema),
     defaultValues: initialValues,
   });
 
-  const onSubmit = async (
-    values: z.infer<typeof updateProfileFormSchema>
-  ) => {
-    
-     const token = await getCookie()
+  const onSubmit = async (values: z.infer<typeof updateProfileFormSchema>) => {
+    const token = await getCookie();
     console.log(values);
-    console.log();
-    
-    
-    if(token) {
-      const res = await updateProfile(values ,token ,existingUser._id)
+
+    if (token) {
+      const updateProfileData = await updateProfile(
+        values,
+        token,
+        existingUser._id
+      );
+      dispatch(updateProfileReducer(updateProfileData));
+      console.log("data form the server ", updateProfileData);
     }
-    
   };
 
   return (
@@ -111,10 +125,7 @@ const flattenedUserData = {
             ]}
           /> */}
           <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit(onSubmit)}
-              
-            >
+            <form onSubmit={form.handleSubmit(onSubmit)}>
               {activeStep === 0 && ( // Render Personal Details section
                 <div className="grid gap-4 py-4">
                   <div>
@@ -158,7 +169,7 @@ const flattenedUserData = {
                   <div>
                     <FormField
                       control={form.control}
-                      name="phone"
+                      name="phoneNumber"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Phone Number</FormLabel>
@@ -179,128 +190,130 @@ const flattenedUserData = {
 
               {activeStep === 1 && ( // Render Car Details section
                 <div className="grid gap-4 py-2">
-                <div>
-                  <FormField
-                    control={form.control}
-                    name="carName"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Car Name</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="Car Name"
-                            {...field}
-                            className="input-field"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              
-                <div>
-                  <FormField
-                    control={form.control}
-                    name="carType"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Car Type</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="Car Type"
-                            {...field}
-                            className="input-field"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              
-                <div>
-                  <FormField
-                    control={form.control}
-                    name="carModel"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Car Model</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="Car Model"
-                            {...field}
-                            className="input-field"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              
-                <div>
-                  <FormField
-                    control={form.control}
-                    name="carCapacity"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Capacity</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="Capacity"
-                            {...field}
-                            className="input-field"
-                            onChange={(event) => field.onChange(Number(event.target.value))}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              
-                <div>
-                  <FormField
-                    control={form.control}
-                    name="fuelType"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Fuel Type</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="Fuel Type"
-                            {...field}
-                            className="input-field"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              
-                <div>
-                  <FormField
-                    control={form.control}
-                    name="vehicleNumber"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Vehicle Number</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="Vehicle Number"
-                            {...field}
-                            className="input-field"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              
-                {/* <div>
+                  <div>
+                    <FormField
+                      control={form.control}
+                      name="carName"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Car Name</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Car Name"
+                              {...field}
+                              className="input-field"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <div>
+                    <FormField
+                      control={form.control}
+                      name="carType"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Car Type</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Car Type"
+                              {...field}
+                              className="input-field"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <div>
+                    <FormField
+                      control={form.control}
+                      name="carModel"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Car Model</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Car Model"
+                              {...field}
+                              className="input-field"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <div>
+                    <FormField
+                      control={form.control}
+                      name="carCapacity"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Capacity</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Capacity"
+                              {...field}
+                              className="input-field"
+                              onChange={(event) =>
+                                field.onChange(Number(event.target.value))
+                              }
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <div>
+                    <FormField
+                      control={form.control}
+                      name="fuelType"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Fuel Type</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Fuel Type"
+                              {...field}
+                              className="input-field"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <div>
+                    <FormField
+                      control={form.control}
+                      name="vehicleNumber"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Vehicle Number</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Vehicle Number"
+                              {...field}
+                              className="input-field"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  {/* <div>
                   <FormField
                     control={form.control}
                     name="carImage"
@@ -315,37 +328,33 @@ const flattenedUserData = {
                     )}
                   />
                 </div> */}
-              </div>
-              
+                </div>
               )}
 
               {activeStep === 2 && ( // Render Driver Verification section
-               <div className="grid gap-4 py-4">
-               <div>
-                 <FormField
-                   control={form.control}
-                   name="driverLicenseNumber"
-                   render={({ field }) => (
-                     <FormItem>
-                       <FormLabel>Driving License Number</FormLabel>
-                       <FormControl>
-                         <Input
-                           placeholder="Driving License Number"
-                           {...field}
-                           className="input-field"
-                         />
-                       </FormControl>
-                       <FormMessage />
-                     </FormItem>
-                   )}
-                 />
-               </div>
-               
-               {/* Commented out the input field for driving license image as per your format */}
-               
-              
-             </div>
-             
+                <div className="grid gap-4 py-4">
+                  <div>
+                    <FormField
+                      control={form.control}
+                      name="driverLicenseNumber"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Driving License Number</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Driving License Number"
+                              {...field}
+                              className="input-field"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  {/* Commented out the input field for driving license image as per your format */}
+                </div>
               )}
 
               <DialogFooter className="gap-3">

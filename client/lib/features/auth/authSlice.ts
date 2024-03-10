@@ -1,9 +1,8 @@
-import { makeStore } from '@/lib/store';
+
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
     user: null,
-    // token: null,
     isLoggedIn : false,
 }
 
@@ -15,23 +14,21 @@ export const authSlice = createSlice({
         setLogin: (state, action) => {
             console.log('action payload:', action.payload);
             state.user = action.payload.user;
-            // state.token = action.payload.token;
             state.isLoggedIn = action.payload.isLoggedIn;
-            // setTimeout(() => {
-            //     state.isLoggedIn = false;
-            //     window.location.href="/login";
-            // }, 15*60*60);
         },
         setLogout: (state) => {
             state.user = null;
-            // state.token = null;
             state.isLoggedIn = false;
         }, 
-        updateProfile: (state, action) => {
+        updateProfileReducer: (state, action) => {
             state.user = action.payload;
+            // console.log('updated user in the store ',state.user);
+            
         },
+        
     },
+    
 });
 
-export const { setLogin, setLogout , updateProfile } = authSlice.actions;
+export const { setLogin, setLogout , updateProfileReducer } = authSlice.actions;
 export default authSlice.reducer;
