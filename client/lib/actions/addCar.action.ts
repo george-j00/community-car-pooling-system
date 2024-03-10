@@ -14,6 +14,7 @@ type carDataParams = {
 };
 
 const baseUrl = "http://localhost:8080/api/users/add-car";
+const baseUrl2 = "http://localhost:8080/api/users/user/update-profile";
 
 export const addCarDetails = async (addCarDetails: carDataParams , userId : string, token:string) => {
   try {
@@ -32,3 +33,22 @@ export const addCarDetails = async (addCarDetails: carDataParams , userId : stri
     }
   }
 };
+export const updateProfile = async (data: any , token : string, userId:string) => {
+  try {
+    const payload = {
+      data : data , 
+      userId:userId,
+    }
+    await setupInterceptors(token)
+    const response = await axios.post(baseUrl, payload);
+    return response?.status
+  } catch (error) {
+    const axiosError = error as AxiosError;
+    if (axiosError.response) {
+      const status = axiosError.response.status;
+      return status
+    }
+  }
+};
+
+

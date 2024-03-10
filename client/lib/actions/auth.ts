@@ -1,5 +1,6 @@
 'use server'
 import { cookies } from 'next/headers'
+import { revalidatePath } from "next/cache";
 
 export const setCookie = async (token:string) => {
     cookies().set({

@@ -36,8 +36,11 @@ const UserData = () => {
         <h3 className="text-lg mb-1">{userData?.email}</h3>
         <h3 className="text-lg mb-2">Ph: +91 8111942818</h3>
       </div>
-      <h2 className="text-xl font-semibold mb-2">Address</h2>
-      <p className="text-base leading-loose mb-4">Kannur, Kerala, 670632</p>
+      {/* <h2 className="text-xl font-semibold mb-2">Address</h2>
+      <p className="text-base leading-loose mb-4">Kannur, Kerala, 670632</p> */}
+      <br />
+      {/* <p className=""><span className="text-red-500">Incomplete</span></p> */}
+      <p className="text-red-500">Incomplete Profile - click edit profile </p>
     </div>
   );
 };

@@ -8,17 +8,20 @@ import NavigationItems from "./NavigationItems";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { setLogout } from "@/lib/features/auth/authSlice";
 import { deleteCookie } from "@/lib/actions/auth";
+import { usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 const Header = () => {
 
   const user = useAppSelector(state => state?.auth?.user);
   const dispatch = useAppDispatch()
-  
+  const router = useRouter()
  
 
   const handleLogout = async () => {
     await deleteCookie()
     dispatch(setLogout())
+    router.replace('/login')
   }
   
   return (

@@ -22,6 +22,7 @@ import { setLogin } from "@/lib/features/auth/authSlice";
 import { Router } from "next/router";
 import { useRouter } from "next/navigation";
 import { setCookie } from "@/lib/actions/auth";
+import { toast } from "../ui/use-toast";
 
 const RegisterForm = ({
   formFields,
@@ -75,6 +76,10 @@ const RegisterForm = ({
         }))
         await setCookie(response?.token,)
         router.push('/')
+        toast({
+          variant:"destructive",
+          description: "Login successful",
+        })
       } 
     }
   };

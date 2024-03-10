@@ -5,14 +5,8 @@ import { jwtVerify } from "jose";
 export const middleware = async (req: NextRequest) => {
 
   const token = req.cookies.get('Jwt_login_token')?.value
-
-  // if (req.nextUrl.pathname === '/login' || req.nextUrl.pathname === '/register') {
-  //   return NextResponse.next(); // Allow access to login and register pages
-  // }
-
   if (!token) {
-    // return NextResponse.redirect('/login');
-    return NextResponse.redirect(new URL('/login', req.url))
+      return NextResponse.redirect(new URL('/login', req.url))
   }
   try {
   const hasVerifiedToken = token && await jwtVerify(token, new TextEncoder().encode("JWT_SECRET_KEY"));
@@ -29,5 +23,5 @@ export const middleware = async (req: NextRequest) => {
 
 
 export const config = {
-  matcher: ["/profile/view-profile"],
+  matcher: ["/profile/view-profile" ,"/profile/add-car" ,"/profile/complaint-register"],
 }
