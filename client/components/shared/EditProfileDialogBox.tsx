@@ -41,28 +41,12 @@ const EditProfileDialogBox = () => {
 
   const existingUser: any = useAppSelector((state) => state?.auth?.user);
   let userId = "";
-
   if (existingUser) {
     const userWithUsername = existingUser as {
       _id: string;
     };
-
     userId = userWithUsername?._id;
   }
-  // const { car, ...otherUserDetails } = existingUser;
-
-  // const { carName, model, type, capacity, fuelType, vehicleNumber } = car;
-
-  // const flattenedUserData = {
-  //   ...otherUserDetails,
-  //   carName,
-  //   carModel: model,
-  //   carType: type,
-  //   carCapacity: capacity,
-  //   fuelType,
-  //   vehicleNumber,
-  // };
-
   const flattenedUserData = {
     ...existingUser,
     carName: existingUser?.car?.carName,
@@ -110,6 +94,7 @@ const EditProfileDialogBox = () => {
       console.log("data form the server ", res?.updatedUser);
     }
   };
+
 
   return (
     <>
