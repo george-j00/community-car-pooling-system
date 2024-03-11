@@ -21,11 +21,9 @@ export const authSlice = createSlice({
             state.isLoggedIn = false;
         }, 
         updateProfileReducer: (state, action) => {
-            state.user = action.payload;
-            // console.log('updated user in the store ',state.user);
-            
+            state.user = null;
+            state.user = action.payload.user
         },
-        
     },
     
 });

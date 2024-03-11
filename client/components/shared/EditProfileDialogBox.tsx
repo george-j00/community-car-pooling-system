@@ -32,13 +32,23 @@ import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { getCookie } from "@/lib/actions/auth";
 import { updateProfile } from "@/lib/actions/addCar.action";
 import { updateProfileReducer } from "@/lib/features/auth/authSlice";
+import { toast } from "../ui/use-toast";
 
 const EditProfileDialogBox = () => {
   const dispatch = useAppDispatch();
   const [activeStep, setActiveStep] = useState(0); // Track active step
+  const [open, setOpen] = useState(false);
 
   const existingUser: any = useAppSelector((state) => state?.auth?.user);
+  let userId = "";
 
+  if (existingUser) {
+    const userWithUsername = existingUser as {
+      _id: string;
+    };
+
+    userId = userWithUsername?._id;
+  }
   // const { car, ...otherUserDetails } = existingUser;
 
   // const { carName, model, type, capacity, fuelType, vehicleNumber } = car;
@@ -74,6 +84,7 @@ const EditProfileDialogBox = () => {
       setActiveStep(activeStep - 1);
     }
   };
+
   const initialValues = existingUser
     ? flattenedUserData
     : updateProfileFormDefaultValues;
@@ -88,19 +99,21 @@ const EditProfileDialogBox = () => {
     console.log(values);
 
     if (token) {
-      const updateProfileData = await updateProfile(
-        values,
-        token,
-        existingUser._id
-      );
-      dispatch(updateProfileReducer(updateProfileData));
-      console.log("data form the server ", updateProfileData);
+      const res = await updateProfile(values, token, userId);
+      if (res) {
+        dispatch(updateProfileReducer({user:res?.updatedUser}));
+        setOpen(false);
+        toast({
+          description: "Profile updated successfully",
+        })
+      }
+      console.log("data form the server ", res?.updatedUser);
     }
   };
 
   return (
     <>
-      <Dialog>
+      <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
           <Button className="text-white bg-green-800">Edit profile</Button>
         </DialogTrigger>
@@ -115,15 +128,6 @@ const EditProfileDialogBox = () => {
             </DialogTitle>
           </DialogHeader>
 
-          {/* Render the StepProgressBar component */}
-          {/* <ProgressBar
-            percent={activeStep * 33} // Calculate progress based on step
-            steps={[
-              { name: "Personal Details" },
-              { name: "Car Details" },
-              { name: "Driver Verification" },
-            ]}
-          /> */}
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
               {activeStep === 0 && ( // Render Personal Details section
@@ -352,28 +356,35 @@ const EditProfileDialogBox = () => {
                       )}
                     />
                   </div>
-
-                  {/* Commented out the input field for driving license image as per your format */}
                 </div>
               )}
 
               <DialogFooter className="gap-3">
-                {activeStep > 0 && ( // Show "Previous" button if not on first step
-                  <Button onClick={handlePrev} className="bg-gray-900">
+                {activeStep > 0 && (
+                  <Button
+                    onClick={handlePrev}
+                    className="bg-gray-900"
+                    type="button"
+                  >
                     Previous
                   </Button>
                 )}
-                {activeStep < 2 && ( // Show "Next" button if not on last step
-                  <Button onClick={handleNext} className="bg-green-800">
+                {activeStep < 2 && (
+                  <Button
+                    onClick={handleNext}
+                    className="bg-green-800"
+                    type="button"
+                  >
                     Next
                   </Button>
                 )}
-                {activeStep === 2 && ( // Show "Save" button on last step
+                {activeStep === 2 && (
                   <Button type="submit" className="bg-orange-300">
                     Save changes
                   </Button>
                 )}
               </DialogFooter>
+
             </form>
           </Form>
         </DialogContent>
