@@ -35,6 +35,10 @@ class UserRouter {
         this.router.post("/api/users/banUser", (req, res) => {
             this.userController.banUser(req, res);
         });
+        this.router.post("/api/users/user/update-profile", (req, res) => {
+            this.userController.updateProfile(req, res);
+            // console.log(req.body);
+        });
     }
     rabbitMq() {
         return __awaiter(this, void 0, void 0, function* () {

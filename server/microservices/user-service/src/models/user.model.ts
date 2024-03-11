@@ -11,9 +11,19 @@ const userSchema = new mongoose.Schema<IUserSchema>({
     required: true,
     unique: true,
   },
+  phoneNumber: {
+    type: String,
+  },
+  profileCompletionStatus:{
+    type: String, enum: ["Complete", "Incomplete"],
+    default: "Incomplete",
+  },
   password: {
     type: String,
     required: true,
+  },
+  driverLicenseNumber:{
+    type: String,
   },
   car: {
     carName: { type: String},

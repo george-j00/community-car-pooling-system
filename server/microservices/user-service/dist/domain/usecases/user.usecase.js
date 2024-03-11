@@ -23,5 +23,8 @@ class UserUsecase {
     banUser(userId) {
         return this.userRepository.banUser(userId);
     }
+    updateProfile(userId, data) {
+        return this.userRepository.updateProfile(userId, data);
+    }
 }
 exports.UserUsecase = UserUsecase;

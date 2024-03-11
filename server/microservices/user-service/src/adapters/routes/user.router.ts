@@ -28,6 +28,12 @@ export class UserRouter {
     );
     this.router.post("/api/users/banUser",(req: Request, res: Response) => {
         this.userController.banUser(req, res);
+      },
+    );
+    this.router.post("/api/users/user/update-profile",(req: Request, res: Response) => {
+        this.userController.updateProfile(req, res);
+        // console.log(req.body);
+        
       }
     );
   }

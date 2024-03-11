@@ -125,5 +125,30 @@ class UserRepository {
             }
         });
     }
+    updateProfile(userId, data) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { carName, carType, carCapacity, carModel, vehicleNumber, fuelType, phone } = data;
+                const existingUser = yield this.UserModel.findById(userId);
+                if (!existingUser) {
+                    throw new Error('User not found');
+                }
+                existingUser.car = Object.assign(Object.assign({}, existingUser.car), { carName, type: carType, model: carModel, capacity: carCapacity, vehicleNumber,
+                    fuelType });
+                existingUser.username = data.username;
+                existingUser.email = data.email;
+                existingUser.phoneNumber = data.phoneNumber;
+                existingUser.driverLicenseNumber = data.driverLicenseNumber;
+                existingUser.profileCompletionStatus = 'Complete';
+                const updatedUser = yield existingUser.save();
+                console.log(updatedUser);
+                return updatedUser;
+            }
+            catch (error) {
+                console.error("Error while banning user:", error);
+                throw new Error("Error while banning user");
+            }
+        });
+    }
 }
 exports.UserRepository = UserRepository;

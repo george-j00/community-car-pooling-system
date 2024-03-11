@@ -106,4 +106,39 @@ export class UserRepository implements IUserCase {
       throw new Error("Error while banning user");
     }
   }
+
+  async updateProfile(userId : string , data : any) : Promise<any> {
+    try {
+      const { carName, carType, carCapacity, carModel, vehicleNumber, fuelType , phone } = data;
+  
+      const existingUser = await this.UserModel.findById(userId);
+      if (!existingUser) {
+        throw new Error('User not found'); 
+      }
+  
+      existingUser.car = {
+        ...existingUser.car, 
+        carName,
+        type: carType,
+        model: carModel,
+        capacity: carCapacity,
+        vehicleNumber,
+        fuelType,
+      };
+  
+      existingUser.username = data.username;
+      existingUser.email = data.email;
+      existingUser.phoneNumber = data.phoneNumber;
+      existingUser.driverLicenseNumber = data.driverLicenseNumber;
+      existingUser.profileCompletionStatus = 'Complete'
+  
+      const updatedUser = await existingUser.save();
+      console.log(updatedUser);
+      return updatedUser; 
+    } catch (error) {
+      console.error("Error while banning user:", error);
+      throw new Error("Error while banning user");
+    }
+  }
+  
 } 

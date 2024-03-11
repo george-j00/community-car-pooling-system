@@ -40,6 +40,19 @@ export class UserController {
       console.log("Error while adding => ", error);
     }
   }
+  async updateProfile(req: Request, res: Response) {
+    try {
+      const { userId , data } = req.body;
+      console.log(userId, data);
+      const response = await this.userUsecase.updateProfile(userId,data);
+      if (response) {
+        res.status(200).json({updatedUser: response});
+      }
+    } catch (error) {
+      res.status(500).send("Error while adding address");
+      console.log("Error while adding => ", error);
+    }
+  }
 
   //   async add_address(req: Request, res: Response) {
   //     try {

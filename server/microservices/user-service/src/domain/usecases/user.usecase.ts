@@ -25,6 +25,9 @@ export class UserUsecase implements IUserCase{
     banUser(userId : string): Promise<any> {
       return this.userRepository.banUser(userId);
     }
+    updateProfile(userId : string , data : any): Promise<any> {
+      return this.userRepository.updateProfile(userId , data);
+    }
  
 
 }   
