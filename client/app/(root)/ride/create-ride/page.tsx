@@ -1,18 +1,25 @@
-import CreateRideForm from "@/components/shared/CreateRide"
+"use client";
+
+import CreateRideForm from "@/components/shared/CreateRide";
+import MapBoxMap from "@/components/shared/map";
+import { useEffect, useState } from "react";
+import { number } from "zod";
 
 const page = () => {
+ 
+
   return (
-   <>
-    <section className="md:wrapper flex flex-col md:flex-row  w-full h-screen">
+    <>
+      <section className="md:wrapper flex flex-col md:flex-row  w-full h-screen gap-10">
         <div className="w-full md:w-1/3">
           <CreateRideForm />
         </div>
         <div className="w-full md:w-2/3">
-        <p>map thing</p>
+          <MapBoxMap />
         </div>
-    </section>
-   </>
-  )
-}
+      </section>
+    </>
+  );
+};
 
-export default page
+export default page;

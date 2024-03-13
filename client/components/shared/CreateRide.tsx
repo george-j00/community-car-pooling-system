@@ -63,6 +63,34 @@ function RideCreationForm() {
     }
     console.log(suggestions);
   };
+  
+  const handleSourceAddressClick = async (item:any) => {
+    setSourceLocation(item?.name), 
+    setSourceAddressSuggestions([])
+    console.log(item?.mapbox_id);
+    await retriveLocationData(item?.mapbox_id,"Source");
+    
+  }
+
+  const handleDestinationAddressClick =async (item:any) => {
+     setDestinationLocation(item?.name),
+     setDestinationAddressSuggestions([])
+     console.log(item?.mapbox_id);
+    await retriveLocationData(item?.mapbox_id ,"Destination");
+  } 
+
+  const retriveLocationData = async(mapboxId:string , type:string) => {
+    const res : any = await axios.get(`https://api.mapbox.com/search/searchbox/v1/retrieve/${mapboxId}?session_token=088fc758-62ce-4041-88e3-93a911a08bc9&access_token=pk.eyJ1IjoiZ2VvcmdlLTExMSIsImEiOiJjbHRvZ2ZqODYwZW5vMmpxcHFlNjkwaGtsIn0.AkhsFFqi-1k9-DykHEI26g`)
+    
+    if (type === 'Source') {
+      console.log('source',res?.data?.features?.[0].geometry?.coordinates);
+    }
+    if (type === 'Destination') {
+      console.log('destination',res?.data?.features?.[0].geometry?.coordinates);
+    }
+  
+  }
+
 
   return (
     <form>
@@ -79,7 +107,7 @@ function RideCreationForm() {
           />
           {
             sourceAddressSuggestions &&  sourceAddressSuggestions.map ((item:any , index:number) => (
-              <div key={index} className="border p-4 shadow-md hover:bg-gray-100 cursor-pointer" onClick={() => {setSourceLocation(item?.name), setSourceAddressSuggestions([])}}>
+              <div key={index} className="border p-4 shadow-md hover:bg-gray-100 cursor-pointer" onClick={() => {handleSourceAddressClick(item)}}>
               <p>{item?.name}</p>
             </div>
             ))
@@ -97,7 +125,7 @@ function RideCreationForm() {
           />
  {
             destinationAddressSuggestions &&  destinationAddressSuggestions.map ((item:any , index:number) => (
-              <div key={index} className="border p-4 shadow-md hover:bg-gray-100 cursor-pointer" onClick={() => {setDestinationLocation(item?.name), setDestinationAddressSuggestions([])}}>
+              <div key={index} className="border p-4 shadow-md hover:bg-gray-100 cursor-pointer" onClick={() => {handleDestinationAddressClick(item)}}>
               <p>{item?.name}</p>
             </div>
             ))

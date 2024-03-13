@@ -16,7 +16,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { loginFormSchema, registerFormSchema } from "@/lib/validator";
 import { userLogin, userRegistration } from "@/lib/actions/auth.action";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAppDispatch } from "@/lib/hooks";
 import { setLogin } from "@/lib/features/auth/authSlice";
 import { Router } from "next/router";
@@ -47,6 +47,20 @@ const RegisterForm = ({
 
   const formSchema = type === "Register" ? registerFormSchema : loginFormSchema;
 
+
+  const [userLocation, setUserLocation] = useState({
+    longitude: 0,
+    latitude: 0,
+  });
+  useEffect(() => {
+    const fetchUserLocation = () => {
+      navigator.geolocation.getCurrentPosition((pos) => {
+        setUserLocation({longitude:pos?.coords?.longitude , latitude:pos?.coords?.latitude});
+      });
+    };
+    fetchUserLocation();
+  }, []);
+  
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     console.log("Form submitted:");
     if (type === "Register") {
@@ -72,7 +86,8 @@ const RegisterForm = ({
         setLoginError(false);
         dispatch(setLogin({
           user:response?.data,
-          isLoggedIn: true
+          isLoggedIn: true,
+          userLocation:userLocation
         }))
         await setCookie(response?.token,)
         router.push('/')

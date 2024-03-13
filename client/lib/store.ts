@@ -6,7 +6,7 @@ import storage from "./storage";
 const authPersistConfig = {
   key: "auth",
   storage: storage,
-  whitelist: ["user"],
+  whitelist: ["user","userLocation"],
 };
 
 const persistedReducer = combineReducers({
