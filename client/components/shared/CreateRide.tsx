@@ -6,6 +6,8 @@ import { Button } from "../ui/button";
 
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useDispatch } from "react-redux";
+import { setDestinationLocationCoordinator, setSourceLocationCoordinator } from "@/lib/features/ride/rideSlice";
 // import ShowSuggestionsBox from "./ShowSuggestionsBox";
 
 
@@ -22,6 +24,14 @@ function RideCreationForm() {
   const [sourceAddressSuggestions, setSourceAddressSuggestions] = useState<string[]>([]);
   const [destinationAddressSuggestions, setDestinationAddressSuggestions] = useState<string[]>([]);
 
+  // const [sourceCoordinate , setSourceCoordinate] = useState({
+  //   latitude:0,
+  //   longitude:0
+  // })
+  // const [destinationCoordinate , setDestinationCoordinate] = useState({
+  //   latitude:0,
+  //   longitude:0
+  // })
   const [formData, setFormData] = useState({
     source: "",
     destination: "",
@@ -29,6 +39,8 @@ function RideCreationForm() {
     pickupTime: "",
     arrivalTime: "",
   });
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const debouncefn = setTimeout(() => {
@@ -50,6 +62,7 @@ function RideCreationForm() {
     return () => clearTimeout(debouncefn);
   }, [desitinationSearchTerm]);
 
+  // suggestions 
   const getAddressSuggestions = async (searchTerm: any, type: string) => {
     const res: any = await axios.get(
       `https://api.mapbox.com/search/searchbox/v1/suggest?q=${searchTerm}&language=en&session_token=06d2aee0-e7c0-4e31-88e3-7bac081020ba&access_token=pk.eyJ1IjoiZ2VvcmdlLTExMSIsImEiOiJjbHRvZ2ZqODYwZW5vMmpxcHFlNjkwaGtsIn0.AkhsFFqi-1k9-DykHEI26g`
@@ -84,11 +97,14 @@ function RideCreationForm() {
     
     if (type === 'Source') {
       console.log('source',res?.data?.features?.[0].geometry?.coordinates);
+      const coordinates :any = res?.data?.features?.[0].geometry?.coordinates
+      dispatch(setSourceLocationCoordinator(coordinates))
     }
     if (type === 'Destination') {
       console.log('destination',res?.data?.features?.[0].geometry?.coordinates);
+      const coordinates :any = res?.data?.features?.[0].geometry?.coordinates
+      dispatch(setDestinationLocationCoordinator(coordinates))
     }
-  
   }
 
 

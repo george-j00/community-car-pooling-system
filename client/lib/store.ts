@@ -2,6 +2,7 @@ import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import authReducer from "./features/auth/authSlice";
 import { persistReducer } from "redux-persist";
 import storage from "./storage";
+import rideReducer from "./features/ride/rideSlice";
 
 const authPersistConfig = {
   key: "auth",
@@ -11,6 +12,7 @@ const authPersistConfig = {
 
 const persistedReducer = combineReducers({
   auth: persistReducer(authPersistConfig, authReducer),
+  ride:rideReducer
 });
 
 export const makeStore = () => {
