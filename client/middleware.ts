@@ -23,5 +23,5 @@ export const middleware = async (req: NextRequest) => {
 
 
 export const config = {
-  matcher: ["/profile/view-profile" ,"/profile/add-car" ,"/profile/complaint-register"],
+  matcher: ["/profile/view-profile" ,"/profile/add-car" ,"/profile/complaint-register","/rides/create-ride"],
 }

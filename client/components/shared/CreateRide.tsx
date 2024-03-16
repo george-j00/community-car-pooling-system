@@ -8,38 +8,47 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { setDestinationLocationCoordinator, setSourceLocationCoordinator } from "@/lib/features/ride/rideSlice";
-// import ShowSuggestionsBox from "./ShowSuggestionsBox";
+import { useAppSelector } from "@/lib/hooks";
+import { getCookie } from "@/lib/actions/auth";
+import { createRide } from "@/lib/actions/addCar.action";
+import { useRouter } from "next/navigation";
 
 
 function RideCreationForm() {
 
   const [formError, setFormError] = useState(false);
-
   const [sourceSearchTerm, setSourceSearchTerm] = useState<string>("");
   const [desitinationSearchTerm, setDestinationSearchTerm] = useState<string>("");
-
   const [sourceLocation, setSourceLocation] = useState<string>("");
   const [destinationLocation, setDestinationLocation] = useState<string>("");
-
   const [sourceAddressSuggestions, setSourceAddressSuggestions] = useState<string[]>([]);
   const [destinationAddressSuggestions, setDestinationAddressSuggestions] = useState<string[]>([]);
 
-  // const [sourceCoordinate , setSourceCoordinate] = useState({
-  //   latitude:0,
-  //   longitude:0
-  // })
-  // const [destinationCoordinate , setDestinationCoordinate] = useState({
-  //   latitude:0,
-  //   longitude:0
-  // })
+
+  const directions: any = useAppSelector((state) => state?.ride?.directions);
+  let userId  = "";
+  const user = useAppSelector((state) => state?.auth?.user);
+  if (user) {
+    const userWithUsername = user as {
+      _id: string;
+    };
+    userId = userWithUsername?._id;
+  }
+  
+  const distance =  directions?.routes?.length > 0 ? directions?.routes[0].distance/1000 : 0 ;
+  const duration =  directions?.routes?.length > 0 ? directions?.routes[0].duration/3600 : 0 ;
+  const rate = distance ? distance * 40 : 0 ;
+
+  if (distance) {
+    console.log('create ride directions',distance,duration);
+  }
+  
   const [formData, setFormData] = useState({
-    source: "",
-    destination: "",
     date: "",
     pickupTime: "",
-    arrivalTime: "",
+    dropOffTime: "",
   });
-
+  const router = useRouter();
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -108,6 +117,49 @@ function RideCreationForm() {
   }
 
 
+    const handleChange = (e : any) => {
+      const { name, value } = e.target;
+      // Update the corresponding state based on the input field name
+      setFormData(prevState => ({
+        ...prevState,
+        [name]: value
+      }));      
+    };
+  
+    const handleSubmit = async (e: any) => {
+      e.preventDefault();
+    
+      if (!sourceLocation || !destinationLocation || !formData.date || !formData.pickupTime || !formData.dropOffTime || !distance || !duration) {
+        setFormError(true)
+        return;
+      }else{
+        setFormError(false)
+      }
+    
+      const rate = distance * 40;
+    
+      const rideData = {
+        source: sourceLocation,
+        destination: destinationLocation,
+        ...formData,
+        distance: distance.toFixed(2),
+        duration: duration.toFixed(2),
+        rate: rate.toFixed(2) ,
+        userId:userId
+      };
+
+      const token = await getCookie()
+      
+     if (token) {
+      const res = await createRide(rideData ,token)
+      if (res) {
+        router.push(`/rides/created-ride/${res?._id}`)
+      }
+     }
+     
+    };
+    
+
   return (
     <form>
       <div className="flex gap-5 flex-col  items-center justify-center h-[80vh]">
@@ -123,8 +175,8 @@ function RideCreationForm() {
           />
           {
             sourceAddressSuggestions &&  sourceAddressSuggestions.map ((item:any , index:number) => (
-              <div key={index} className="border p-4 shadow-md hover:bg-gray-100 cursor-pointer" onClick={() => {handleSourceAddressClick(item)}}>
-              <p>{item?.name}</p>
+              <div key={index} className="border p-4 shadow-md hover:bg-gray-100 cursor-pointer" onClick={() => {handleSourceAddressClick(item)} }>
+              <p>{item?.name} {item?.full_address}</p>
             </div>
             ))
           }
@@ -148,8 +200,53 @@ function RideCreationForm() {
           }
         </div>
 
-        {formError ? <p className="text-red-500">Complete form</p> : ""}
-        <Button className="w-2/3 mt-5">Create Ride</Button>
+        <div className="grid w-full max-w-sm items-center gap-1.5">
+          <Label htmlFor="date">Date </Label>
+          <Input
+            name="date"
+            type="date"
+            id="date"
+            placeholder="Date"
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className="grid w-full max-w-sm items-center gap-1.5">
+          <Label htmlFor="pickupTime">Pickup Time</Label>
+          <Input
+            name="pickupTime"
+            type="time"
+            id="pickupTime"
+            placeholder="Pickup Time"
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className="grid w-full max-w-sm items-center gap-1.5">
+          <Label htmlFor="dropOffTime">Drop-off Time</Label>
+          <Input
+            name="dropOffTime"
+            type="time"
+            id="dropOffTime"
+            placeholder="Drop-off Time"
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className="grid w-full max-w-sm items-center gap-1.5">
+          <Label htmlFor="totalCharge">Total Charge ₹</Label>
+          <Input
+            name="totalCharge"
+            type="number"
+            id="totalCharge"
+            value={rate.toFixed(2)}
+            required
+            disabled
+          />
+        </div>
+
+        {formError ? <p className="text-red-500">Some data is missing. Please fill all the required fields.</p> : ""}
+        <Button className="w-2/3 mt-5" onClick={handleSubmit}>Create Ride</Button>
       </div>
     </form>
   );

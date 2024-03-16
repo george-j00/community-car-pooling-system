@@ -8,6 +8,7 @@ import LocationMarker from "./Marker";
 import axios from "axios";
 import { setDirections } from "@/lib/features/ride/rideSlice";
 import Directions from "./Directions";
+import ShowDistanceTime from "./ShowDistanceTime";
 
 const MapBoxMap = () => {
   const userLocation = useAppSelector((state) => state?.auth?.userLocation);
@@ -70,7 +71,9 @@ const MapBoxMap = () => {
   };
 
   return (
-    <div className="flex items-center h-[75vh]">
+
+    <>
+     <div className="flex items-center h-[75vh]">
       {userLocation ? (
         <Map
           ref={mapRef}
@@ -95,6 +98,13 @@ const MapBoxMap = () => {
         </Map>
       ) : null}
     </div>
+
+    <div className="">
+      <ShowDistanceTime directions={directions?.routes}/>
+    </div>
+    </>
+   
+    
   );
 };
 

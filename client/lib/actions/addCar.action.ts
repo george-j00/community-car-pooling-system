@@ -15,6 +15,7 @@ type carDataParams = {
 
 const baseUrl = "http://localhost:8080/api/users/add-car";
 const baseUrl2 = "http://localhost:8080/api/users/user/update-profile";
+const baseUrl3 = "http://localhost:8080/api/rides/create-ride";
 
 export const addCarDetails = async (addCarDetails: carDataParams , userId : string, token:string) => {
   try {
@@ -42,6 +43,23 @@ export const updateProfile = async (data: any , token : string, userId:string) =
     await setupInterceptors(token)
     const response = await axios.post(baseUrl2, payload);
     return response?.data
+  } catch (error) {
+    const axiosError = error as AxiosError;
+    if (axiosError.response) {
+      const status = axiosError.response.status;
+      return status
+    }
+  }
+};
+export const createRide = async (rideData: any , token : string) => {
+  try {
+   
+    console.log('the payloaddddd',rideData);
+    
+    await setupInterceptors(token)
+    const response = await axios.post(baseUrl3, rideData);
+    return response?.data
+    
   } catch (error) {
     const axiosError = error as AxiosError;
     if (axiosError.response) {
