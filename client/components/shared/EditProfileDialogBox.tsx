@@ -79,11 +79,11 @@ const EditProfileDialogBox = () => {
   });
 
   const onSubmit = async (values: z.infer<typeof updateProfileFormSchema>) => {
-    const token = await getCookie();
+    // const token = await getCookie();
     console.log(values);
 
-    if (token) {
-      const res = await updateProfile(values, token, userId);
+    // if (token) {
+      const res = await updateProfile(values, userId);
       if (res) {
         dispatch(updateProfileReducer({user:res?.updatedUser}));
         setOpen(false);
@@ -92,7 +92,7 @@ const EditProfileDialogBox = () => {
         })
       }
       console.log("data form the server ", res?.updatedUser);
-    }
+    // }
   };
 
 

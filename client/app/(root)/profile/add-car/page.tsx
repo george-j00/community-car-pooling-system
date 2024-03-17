@@ -66,11 +66,9 @@ const page =  () => {
 
  async function onSubmit(values: z.infer<typeof formSchema>) {
 
-    const token = await getCookie()
-
     try {    
-    if (token) {
-     const resStatus =  await addCarDetails(values,userId,token)
+    
+     const resStatus =  await addCarDetails(values,userId)
      console.log(resStatus);
      
      if (resStatus === 401 ) {
@@ -88,7 +86,7 @@ const page =  () => {
       })
       form.reset();
      }
-    }
+    
 
   } catch (error) {
     if (error instanceof Error && error.message.includes('401')) {

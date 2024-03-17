@@ -148,15 +148,11 @@ function RideCreationForm() {
         userId:userId
       };
 
-      const token = await getCookie()
-      
-     if (token) {
-      const res = await createRide(rideData ,token)
+      const res = await createRide(rideData)
+
       if (res) {
         router.push(`/rides/created-ride/${res?._id}`)
       }
-     }
-     
     };
     
 

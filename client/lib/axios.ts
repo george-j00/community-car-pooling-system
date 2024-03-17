@@ -1,15 +1,13 @@
 import axios from 'axios';
+import { getCookie } from './actions/auth';
 
-export default async function setupInterceptors(token:string) {
+export default async function setupInterceptors() {
   axios.interceptors.request.use(
-    (config) => {
-    //   const store = useStore(); // Access the Redux store
-    //   const token = store.getState().auth.token;
-
+   async (config) => {
+      const token  = await getCookie();
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
-
       return config;
     },
     (error) => Promise.reject(error)

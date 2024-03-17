@@ -1,7 +1,6 @@
 import axios, { AxiosError } from "axios";
-import { useAppDispatch, useAppSelector, useAppStore } from "../hooks";
-import { setLogout } from "../features/auth/authSlice";
 import setupInterceptors from "../axios";
+import { getCookie } from "./auth";
 
 
 type carDataParams = {
@@ -16,14 +15,15 @@ type carDataParams = {
 const baseUrl = "http://localhost:8080/api/users/add-car";
 const baseUrl2 = "http://localhost:8080/api/users/user/update-profile";
 const baseUrl3 = "http://localhost:8080/api/rides/create-ride";
+const baseUrl4 = "http://localhost:8080/api/rides/get-all-rides";
 
-export const addCarDetails = async (addCarDetails: carDataParams , userId : string, token:string) => {
+export const addCarDetails = async (addCarDetails: carDataParams , userId : string) => {
   try {
     const payload = {
       carData : addCarDetails , 
       userId:userId,
     }
-    await setupInterceptors(token)
+    await setupInterceptors()
     const response = await axios.post(baseUrl, payload);
     return response?.status
   } catch (error) {
@@ -34,13 +34,14 @@ export const addCarDetails = async (addCarDetails: carDataParams , userId : stri
     }
   }
 };
-export const updateProfile = async (data: any , token : string, userId:string) => {
+export const updateProfile = async (data: any, userId:string) => {
   try {
     const payload = {
       data : data , 
       userId:userId,
     }    
-    await setupInterceptors(token)
+   
+    await setupInterceptors()
     const response = await axios.post(baseUrl2, payload);
     return response?.data
   } catch (error) {
@@ -51,15 +52,29 @@ export const updateProfile = async (data: any , token : string, userId:string) =
     }
   }
 };
-export const createRide = async (rideData: any , token : string) => {
+export const createRide = async (rideData: any) => {
   try {
    
     console.log('the payloaddddd',rideData);
     
-    await setupInterceptors(token)
+    await setupInterceptors()
     const response = await axios.post(baseUrl3, rideData);
     return response?.data
     
+  } catch (error) {
+    const axiosError = error as AxiosError;
+    if (axiosError.response) {
+      const status = axiosError.response.status;
+      return status
+    }
+  }
+};
+export const fetchAllAvailableRides = async () => {
+  try {
+    await setupInterceptors()
+    const response = await axios.get(baseUrl4);
+    console.log(response?.data);
+    return response?.data
   } catch (error) {
     const axiosError = error as AxiosError;
     if (axiosError.response) {
