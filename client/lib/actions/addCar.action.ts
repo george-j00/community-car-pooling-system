@@ -16,6 +16,7 @@ const baseUrl = "http://localhost:8080/api/users/add-car";
 const baseUrl2 = "http://localhost:8080/api/users/user/update-profile";
 const baseUrl3 = "http://localhost:8080/api/rides/create-ride";
 const baseUrl4 = "http://localhost:8080/api/rides/get-all-rides";
+const baseUrl5 = "http://localhost:8080/api/users/getUser";
 
 export const addCarDetails = async (addCarDetails: carDataParams , userId : string) => {
   try {
@@ -73,6 +74,22 @@ export const fetchAllAvailableRides = async () => {
   try {
     await setupInterceptors()
     const response = await axios.get(baseUrl4);
+    console.log(response?.data);
+    return response?.data
+  } catch (error) {
+    const axiosError = error as AxiosError;
+    if (axiosError.response) {
+      const status = axiosError.response.status;
+      return status
+    }
+  }
+};
+export const fetchUserData = async (userId : string) => {
+  try {
+    console.log('user id on the fetch user data ',userId);
+    
+    await setupInterceptors()
+    const response = await axios.get(`${baseUrl5}/${userId}`);
     console.log(response?.data);
     return response?.data
   } catch (error) {

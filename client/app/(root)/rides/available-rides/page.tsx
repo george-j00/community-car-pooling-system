@@ -2,31 +2,25 @@
 
 import RideCard from "@/components/shared/RideCard";
 import { fetchAllAvailableRides } from "@/lib/actions/addCar.action"
+import { setAllRidesAvail } from "@/lib/features/ride/rideSlice";
+import { useAppDispatch } from "@/lib/hooks";
+import { IRide } from "@/lib/types/IRide";
 import Link from "next/link";
 import { useEffect, useState } from "react"
 
 const page = () => {
 
-    interface IRide {
-        _id: string; 
-        userId: string;
-        source: string;
-        destination: string;
-        date: string;
-        pickupTime: string;
-        dropOffTime: string;
-        distance: string;
-        duration: string;
-        rate: string;
-      }
+    
 
     const [allRides , setAllRides] = useState<IRide[]>([]);
+    const dispatch = useAppDispatch();
 
     useEffect(() => {
         const fetchRides = async () => {
             try {
               const rides = await fetchAllAvailableRides(); 
               setAllRides(rides); 
+              dispatch(setAllRidesAvail(rides));
             } catch (error) {
               console.error("Error fetching rides:", error);
             }

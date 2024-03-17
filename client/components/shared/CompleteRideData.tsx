@@ -1,11 +1,13 @@
-import Link from "next/link";
+import React from "react";
 import { FcInternal } from "react-icons/fc";
+import { Button } from "../ui/button";
+import { Avatar } from "@radix-ui/react-avatar";
+import ProfileAvatar from "./Avatar";
 
-
-const RideCard = ({ride} : any) => {
+const CompleteRideData = ({ ride }: any) => {
   return (
     <>
-        <div className="bg-gray-100  w-full p-5 flex flex-col gap-3 rounded-lg shadow-md hover:bg-gray-50">
+      <div className="bg-gray-100  w-full p-5 flex flex-col gap-3 rounded-lg shadow-md">
         <div className="flex flex-row gap-3  items-center">
           <svg
             width="25"
@@ -32,23 +34,45 @@ const RideCard = ({ride} : any) => {
           <div>
             <div className="flex flex-col  ml-2 gap-4">
               <div className="flex flex-row justify-between gap-10 items-center ">
-                <p className="text-base font-semibold">From : {ride?.source} </p>
+                <p className="text-base font-semibold">
+                  From : {ride?.source}{" "}
+                </p>
                 <p className="text-blue-500">{ride?.pickupTime}</p>
               </div>
               <div className="flex flex-row justify-between items-center gap-10">
-                <p className="text-base font-semibold">To : {ride?.destination} </p>
+                <p className="text-base font-semibold">
+                  To : {ride?.destination}{" "}
+                </p>
                 <p className="text-blue-500">{ride?.dropOffTime}</p>
               </div>
             </div>
           </div>
         </div>
         <div className="flex flex-row text-center mt-5 justify-around">
-            <p className="text-green-500 font-bold">Charge : {ride?.rate} ₹</p>
-            <p className="text-blue-500 font-bold">Distnace : {ride?.distance} Km</p>
+          <p className="text-green-500 font-bold">Charge : {ride?.rate} ₹</p>
+          <p className="text-blue-500 font-bold">
+            Distnace : {ride?.distance} Km
+          </p>
         </div>
       </div>
+     
+  <div className="bg-gray-100 w-full p-5 rounded-lg shadow-md flex flex-row items-center justify-evenly">
+      <div className="flex flex-col space-y-2  text-gray-500"> {/* Center content */}
+        <h2 className="font-bold ">Driver : <span className="text-black font-bold">{ride?.username}</span> </h2>
+        <h2 className="font-bold">Driver : <span className=" text-black font-bold">{ride?.phoneNumber}</span> </h2>
+        <h2 className="font-bold">Licence No. : <span className="text-black  font-bold">{ride?.driverLicenseNumber}</span> </h2>
+        <h2 className="font-bold">Car : <span className="text-black font-bold">{ride?.car?.carName}</span> </h2>
+        <h2 className="font-bold">Vehicle Number : <span className="text-black  font-bold">{ride?.car?.vehicleNumber}</span> </h2>
+        <h2 className="font-bold">Capacity : <span className="text-black  font-bold">{ride?.car?.capacity}</span> </h2>
+        <h2 className="font-bold">Fuel type : <span className="text-black  font-bold">{ride?.car?.fuelType}</span> </h2>
+      </div>
+      <div> 
+        <ProfileAvatar />
+      </div>
+    </div>
+     
     </>
   );
 };
 
-export default RideCard;
+export default CompleteRideData;

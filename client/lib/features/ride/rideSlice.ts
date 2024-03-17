@@ -10,7 +10,9 @@ const initialState = {
         latitude:0,
         longitude:0
     },
-    directions:[]
+    directions:[],
+    allRides : [],
+    completeRideData : {}
 }
 
 
@@ -32,8 +34,16 @@ export const rideSlice = createSlice({
             console.log('direction action payload:', action.payload);
             state.directions = action.payload;
         },
+        setAllRidesAvail: (state, action) => {
+            console.log('ride data action payload ' , action.payload);
+            state.allRides = action.payload;
+        },
+        setCompleteRideData: (state, action) => {
+            console.log('complete ride dataaaa action payload ' , action.payload);
+            state.completeRideData = action.payload;
+        }
     },
 });
 
-export const { setSourceLocationCoordinator, setDestinationLocationCoordinator,setDirections} = rideSlice.actions;
+export const { setSourceLocationCoordinator, setDestinationLocationCoordinator,setDirections,setAllRidesAvail , setCompleteRideData} = rideSlice.actions;
 export default rideSlice.reducer;
