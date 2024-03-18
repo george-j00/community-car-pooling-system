@@ -49,10 +49,11 @@ const CompleteRideData = ({ ride }: any) => {
           </div>
         </div>
         <div className="flex flex-row text-center mt-5 justify-around">
-          <p className="text-green-500 font-bold">Charge : {ride?.rate} ₹</p>
-          <p className="text-blue-500 font-bold">
-            Distnace : {ride?.distance} Km
-          </p>
+        <p className="p-bold-20 rounded-full bg-green-500/10 px-5 py-2 text-green-700">
+        {ride?.rate} ₹
+        </p>
+            <p className="text-blue-500 font-bold mt-2">{ride?.distance} Km</p>
+            <p className="text-yellow-500 font-bold mt-2">Seat available : {ride?.seatAvailable}</p>
         </div>
       </div>
      

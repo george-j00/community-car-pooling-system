@@ -4,6 +4,7 @@ import { Button } from "../ui/button";
 import Link from "next/link";
 
 import CompleteRideData from "./CompleteRideData";
+import { BookSeat } from "./BookSeat";
 
 const ViewRide = () => {
   const completeRideData = useAppSelector(
@@ -23,13 +24,7 @@ const ViewRide = () => {
         height={1000}
         className="flex h-[400px] mt-14 object-cover object-center"
       />
-
-      <Button
-        size="lg"
-        className="button mt-10 rounded-full w-full font-bold bg-black text-white hover:bg-white hover:text-black hover:border"
-      >
-        Book seat
-      </Button>
+      <BookSeat completeRideData={completeRideData}/>
     </div>
 
     <div className="flex w-full flex-col gap-8 p-5 md:p-10">

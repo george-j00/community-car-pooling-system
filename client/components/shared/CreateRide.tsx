@@ -13,7 +13,19 @@ import { getCookie } from "@/lib/actions/auth";
 import { createRide } from "@/lib/actions/addCar.action";
 import { useRouter } from "next/navigation";
 
+type rideData = {
 
+    distance: string;
+    duration: string;
+    rate: string;
+    userId: string;
+    date: string;
+    pickupTime: string;
+    dropOffTime: string;
+    source: string;
+    destination: string;
+    seatAvailable:number;
+}
 function RideCreationForm() {
 
   const [formError, setFormError] = useState(false);
@@ -27,12 +39,20 @@ function RideCreationForm() {
 
   const directions: any = useAppSelector((state) => state?.ride?.directions);
   let userId  = "";
+  let seatAvailable = 0
   const user = useAppSelector((state) => state?.auth?.user);
+
   if (user) {
     const userWithUsername = user as {
       _id: string;
+      car:{
+        capacity: number;
+      }
     };
     userId = userWithUsername?._id;
+   if ( userWithUsername?.car) {
+    seatAvailable = userWithUsername?.car?.capacity;
+   }
   }
   
   const distance =  directions?.routes?.length > 0 ? directions?.routes[0].distance/1000 : 0 ;
@@ -138,14 +158,15 @@ function RideCreationForm() {
     
       const rate = distance * 40;
     
-      const rideData = {
+      const rideData : rideData = {
         source: sourceLocation,
         destination: destinationLocation,
         ...formData,
         distance: distance.toFixed(2),
         duration: duration.toFixed(2),
         rate: rate.toFixed(2) ,
-        userId:userId
+        userId:userId,
+        seatAvailable:seatAvailable
       };
 
       const res = await createRide(rideData)
