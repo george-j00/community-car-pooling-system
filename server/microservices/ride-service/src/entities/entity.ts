@@ -1,6 +1,4 @@
-
 export class RideEntity {
-
   public readonly id?: string;
   public readonly userId: string;
   public readonly source: string;
@@ -11,7 +9,7 @@ export class RideEntity {
   public readonly distance: string;
   public readonly duration: string;
   public readonly rate: string;
-  
+
   constructor(
     id: string,
     userId: string,

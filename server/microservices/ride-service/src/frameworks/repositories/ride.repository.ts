@@ -10,11 +10,10 @@ export class RideRepository implements IRideUsecase {
   async createRide(rideData: RideEntity): Promise<any> {
     const newRide = new this.RideModel(rideData);
     const rideRes = await newRide.save();
-    return rideRes
+    return rideRes;
   }
   async getAvailableRides(): Promise<RideEntity[]> {
-   const allAvailableRides = await this.RideModel.find();
-   return allAvailableRides;
+    const allAvailableRides = await this.RideModel.find();
+    return allAvailableRides;
   }
-
 }
