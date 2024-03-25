@@ -35,6 +35,8 @@ export const addCarDetails = async (addCarDetails: carDataParams , userId : stri
     }
   }
 };
+
+
 export const updateProfile = async (data: any, userId:string) => {
   try {
     const payload = {
