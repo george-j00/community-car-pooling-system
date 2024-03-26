@@ -15,8 +15,8 @@ class RideRouter {
         this.router.post("/api/rides/create-ride", (req, res) => {
             this.controller.create_ride(req, res);
         });
-        this.router.get("/api/rides/get-all-rides", (req, res) => {
-            this.controller.getAllAvailableRides(req, res);
+        this.router.post("/api/rides/search-rides", (req, res) => {
+            this.controller.searchRides(req, res);
         });
     }
 }

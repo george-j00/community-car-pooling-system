@@ -2,5 +2,5 @@ import { RideEntity } from "../../entities/entity";
 
 export interface IRideUsecase {
   createRide(rideData: RideEntity): Promise<any>;
-  getAvailableRides(): Promise<RideEntity[]>;
+  searchRides(source:string,destination:string): Promise<RideEntity[]>;
 }

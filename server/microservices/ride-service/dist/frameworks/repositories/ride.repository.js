@@ -21,10 +21,22 @@ class RideRepository {
             return rideRes;
         });
     }
-    getAvailableRides() {
+    searchRides(searchParams) {
         return __awaiter(this, void 0, void 0, function* () {
-            const allAvailableRides = yield this.RideModel.find();
-            return allAvailableRides;
+            try {
+                const source = searchParams === null || searchParams === void 0 ? void 0 : searchParams.source;
+                const destination = searchParams === null || searchParams === void 0 ? void 0 : searchParams.destination;
+                const allAvailableRides = yield this.RideModel.find({
+                    source: { $regex: new RegExp("^" + source, "i") },
+                    destination: { $regex: new RegExp("^" + destination, "i") },
+                });
+                console.log("all available rides:", allAvailableRides);
+                return allAvailableRides;
+            }
+            catch (error) {
+                console.error("Error fetching rides:", error);
+                throw error;
+            }
         });
     }
 }

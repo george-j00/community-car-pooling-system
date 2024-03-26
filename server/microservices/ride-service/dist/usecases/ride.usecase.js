@@ -8,8 +8,8 @@ class RideUsecase {
     createRide(rideData) {
         return this.rideRepository.createRide(rideData);
     }
-    getAvailableRides() {
-        return this.rideRepository.getAvailableRides();
+    searchRides(searchParams) {
+        return this.rideRepository.searchRides(searchParams);
     }
 }
 exports.RideUsecase = RideUsecase;

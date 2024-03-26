@@ -7,8 +7,9 @@ export class RideUsecase implements IRideUsecase {
 
   createRide(rideData: RideEntity): Promise<any> {
     return this.rideRepository.createRide(rideData);
-  }
-  getAvailableRides(): Promise<RideEntity[]> {
-    return this.rideRepository.getAvailableRides();
-  }
+  } 
+  searchRides(searchParams:any): Promise<RideEntity[]> {
+    return this.rideRepository.searchRides(searchParams);
+  } 
 }
+ 

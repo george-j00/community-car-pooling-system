@@ -12,8 +12,20 @@ export class RideRepository implements IRideUsecase {
     const rideRes = await newRide.save();
     return rideRes;
   }
-  async getAvailableRides(): Promise<RideEntity[]> {
-    const allAvailableRides = await this.RideModel.find();
-    return allAvailableRides;
+  async searchRides(searchParams: any): Promise<RideEntity[]> {
+    try {
+      const source = searchParams?.source;
+      const destination = searchParams?.destination;
+
+      const allAvailableRides = await this.RideModel.find({
+        source: { $regex: new RegExp("^" + source, "i") },
+        destination: { $regex: new RegExp("^" + destination, "i") },
+      });
+      console.log("all available rides:", allAvailableRides);
+      return allAvailableRides;
+    } catch (error) {
+      console.error("Error fetching rides:", error);
+      throw error;
+    }
   }
 }

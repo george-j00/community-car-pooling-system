@@ -17,8 +17,8 @@ export class RideRouter {
             this.controller.create_ride(req, res)
       }
     );
-    this.router.get("/api/rides/get-all-rides",(req: Request, res: Response) => {
-            this.controller.getAllAvailableRides(req, res)
+    this.router.post("/api/rides/search-rides",(req: Request, res: Response) => {
+            this.controller.searchRides(req, res)
       }
     );
   }
