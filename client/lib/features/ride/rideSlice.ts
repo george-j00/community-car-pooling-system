@@ -12,7 +12,8 @@ const initialState = {
     },
     directions:[],
     allRides : [],
-    completeRideData : {}
+    completeRideData : {},
+   
 }
 
 
@@ -35,13 +36,13 @@ export const rideSlice = createSlice({
             state.directions = action.payload;
         },
         setAllRidesAvail: (state, action) => {
-            console.log('ride data action payload ' , action.payload);
+            console.log('available ride data action payload ' , action.payload);
             state.allRides = action.payload;
         },
         setCompleteRideData: (state, action) => {
             console.log('complete ride dataaaa action payload ' , action.payload);
             state.completeRideData = action.payload;
-        }
+        },
     },
 });
 

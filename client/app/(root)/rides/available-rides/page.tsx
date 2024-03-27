@@ -1,47 +1,32 @@
-'use client'
+"use client";
 
 import RideCard from "@/components/shared/RideCard";
-import { fetchAllAvailableRides } from "@/lib/actions/addCar.action"
+import { fetchAllAvailableRides } from "@/lib/actions/addCar.action";
 import { setAllRidesAvail } from "@/lib/features/ride/rideSlice";
-import { useAppDispatch } from "@/lib/hooks";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { IRide } from "@/lib/types/IRide";
+import axios from "axios";
 import Link from "next/link";
-import { useEffect, useState } from "react"
+import { useState } from "react";
 
-const page = () => {
+const Page = () => {
 
-    
+  const rides : IRide[] = useAppSelector((state) => state?.ride?.allRides);
 
-    const [allRides , setAllRides] = useState<IRide[]>([]);
-    const dispatch = useAppDispatch();
-
-    useEffect(() => {
-        const fetchRides = async () => {
-            try {
-              const rides = await fetchAllAvailableRides(); 
-              setAllRides(rides); 
-              dispatch(setAllRidesAvail(rides));
-            } catch (error) {
-              console.error("Error fetching rides:", error);
-            }
-          };
-      
-          fetchRides();
-    }, [])
-    
+  console.log("available ridess",rides);
+  
   return (
     <>
-        <h1 className="flex justify-center text-3xl mt-5">Available rides </h1>
-
-    <div className="wrapper flex flex-col md:flex-row gap-5">
-      {allRides.map((ride, i)  => (
-         <Link href={`/rides/available-rides/${ride._id}`}>
-             <RideCard key={i} ride={ride} />
-         </Link>
-      ))}
-    </div>
+      <h1 className="flex justify-center text-3xl mt-5">Available rides </h1>
+      <div className="wrapper flex flex-col md:flex-row gap-5">
+        {rides?.map((ride, i) => (
+          <Link key={i} href={`/rides/available-rides/${ride._id}`}>
+            <RideCard ride={ride} />
+          </Link>
+        ))}
+      </div>
     </>
-  )
-}
+  );
+};
 
-export default page
+export default Page;

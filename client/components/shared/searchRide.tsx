@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import React, { useState } from "react";
 import { Label } from "../ui/label";
@@ -11,15 +11,33 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
+import { useRouter } from "next/navigation";
+import { useAppDispatch } from "@/lib/hooks";
+import { setAllRidesAvail } from "@/lib/features/ride/rideSlice";
+import { fetchAllAvailableRides } from "@/lib/actions/addCar.action";
 
 const SearchRide = () => {
   const [pickupLocation, setPickupLocation] = useState("");
   const [dropoffLocation, setDropoffLocation] = useState("");
+  const [isRidesAvail, setIsRidesAvail] = useState(true);
+  const router = useRouter();
+  const dispatch = useAppDispatch();
 
-  const handleSearch = () => {
-    console.log("Pickup Location:", pickupLocation);
-    console.log("Drop-off Location:", dropoffLocation);
-    // Perform your search logic here
+  const handleSearch = async  () => {
+   
+   const res =  await fetchAllAvailableRides(pickupLocation , dropoffLocation);
+  //  dispatch(setAllRidesAvail())
+  if (res?.length === 0) {
+    setIsRidesAvail(false);
+    console.log('No available ridess');
+  }else{
+      dispatch(setAllRidesAvail(res))
+     router.push(
+      `/rides/available-rides`
+    );
+    console.log('available ridess');
+    setIsRidesAvail(true);
+  }
   };
 
   return (
@@ -91,6 +109,8 @@ const SearchRide = () => {
               </div>
             </div>
           </div>
+        {!isRidesAvail && <p className="text-center text-red-500">No rides available </p>}
+
         </DrawerContent>
       </Drawer>
     </>
