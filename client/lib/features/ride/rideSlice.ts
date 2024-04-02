@@ -1,4 +1,5 @@
 
+import { ICompleteRide } from '@/lib/types/ICompleteRide';
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
@@ -12,8 +13,7 @@ const initialState = {
     },
     directions:[],
     allRides : [],
-    completeRideData : {},
-   
+    completeRideData : {} as ICompleteRide,
 }
 
 

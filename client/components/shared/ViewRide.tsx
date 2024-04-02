@@ -5,9 +5,10 @@ import Link from "next/link";
 
 import CompleteRideData from "./CompleteRideData";
 import { BookSeat } from "./BookSeat";
+import { ICompleteRide } from "@/lib/types/ICompleteRide";
 
 const ViewRide = () => {
-  const completeRideData = useAppSelector(
+  const completeRideData  = useAppSelector(
     (state) => state?.ride?.completeRideData
   );
   console.log("completeRideData", completeRideData);

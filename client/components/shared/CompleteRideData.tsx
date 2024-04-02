@@ -3,8 +3,9 @@ import { FcInternal } from "react-icons/fc";
 import { Button } from "../ui/button";
 import { Avatar } from "@radix-ui/react-avatar";
 import ProfileAvatar from "./Avatar";
+import { ICompleteRide } from "@/lib/types/ICompleteRide";
 
-const CompleteRideData = ({ ride }: any) => {
+const CompleteRideData = ({ ride }: any) => {  
   return (
     <>
       <div className="bg-gray-100  w-full p-5 flex flex-col gap-3 rounded-lg shadow-md">

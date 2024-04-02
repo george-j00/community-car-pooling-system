@@ -10,7 +10,9 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useAppSelector } from "@/lib/hooks";
 import { useState } from "react";
+import Checkout from "./Checkout";
 
 export function BookSeat({ completeRideData }: any) {
   const capacity = completeRideData?.seatAvailable;
@@ -28,17 +30,13 @@ export function BookSeat({ completeRideData }: any) {
   };
 
   const handleSubmit = () => {
-    console.log('*****' , completeRideData);
-  }
+    console.log("*****", completeRideData);
+  };
   return (
     <Dialog>
       <DialogTrigger>
-        <Button
-          variant="outline"
-          className="bg-black text-white p-4 w-[40vw] mt-10 rounded-full"
-        >
-          Book seat
-        </Button>
+          {/* Book seat button  */}
+         <Checkout />
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
@@ -62,7 +60,9 @@ export function BookSeat({ completeRideData }: any) {
           </div>
         </div>
         {countError && (
-          <p className="text-red-500 text-center mb-5">{count} seats are not available</p>
+          <p className="text-red-500 text-center mb-5">
+            {count} seats are not available
+          </p>
         )}
         <DialogFooter>
           <Button disabled={countError} onClick={handleSubmit}>

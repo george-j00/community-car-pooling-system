@@ -14,13 +14,11 @@ export const middleware = async (req: NextRequest) => {
     if (hasVerifiedToken) {
       return NextResponse.next();
     }
-
   } catch (error) {
     console.error("Token verification error:", error);
     return NextResponse.redirect('/login');
   }
 };
-
 
 export const config = {
   matcher: ["/profile/view-profile" ,"/profile/add-car" ,"/profile/complaint-register","/rides/create-ride"],

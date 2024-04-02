@@ -30,12 +30,13 @@ const Page = ({ params: { id } }: RideParams) => {
     return null;
   }
   const userId = selectedRide?.userId;
+  const rideId=id;
 
   useEffect(() => {
     if (userId) {
       const fetchData = async () => {
         const res = await fetchUserData(userId);
-        dispatch(setCompleteRideData({ ...selectedRide, ...res?.updatedUser }));
+        dispatch(setCompleteRideData({ ...selectedRide,rideId ,...res?.updatedUser }));
       };
       fetchData();
     }
