@@ -34,7 +34,7 @@ import { useToast } from "@/components/ui/use-toast"
 import { getCookie } from "@/lib/actions/auth";
 
 
-const page =  () => {
+const AddCar =  () => {
   const router = useRouter()
   const dispatch = useAppDispatch()
   const { toast } = useToast()
@@ -91,7 +91,7 @@ const page =  () => {
   } catch (error) {
     if (error instanceof Error && error.message.includes('401')) {
         // setError('Unauthorized. Please login again.');
-        router.push('/login'); // Redirect to login page
+        router.push('/login'); // Redirect to login AddCar
       } else {
         // setError(error.message); // Handle other errors
       }
@@ -241,4 +241,4 @@ const page =  () => {
   );
 };
 
-export default page;
+export default AddCar;

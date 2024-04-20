@@ -29,14 +29,25 @@ export function BookSeat({ completeRideData }: any) {
     }
   };
 
-  const handleSubmit = () => {
-    console.log("*****", completeRideData);
+  const onCheckout = () => {
+    const payload = {
+      source: completeRideData?.source,
+      destination: completeRideData?.destination,
+      rate: completeRideData?.rate,
+      rideId: completeRideData?.rideId,
+      userId: completeRideData?.userId,
+      distance: completeRideData?.distance,
+      duration: completeRideData?.duration,
+    };
+
+    console.log("ride confirm payload", payload);
   };
   return (
     <Dialog>
       <DialogTrigger>
-          {/* Book seat button  */}
-         <Checkout />
+        <Button className="rounded-full mt-2 w-72">
+          Book seat
+        </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
@@ -65,9 +76,10 @@ export function BookSeat({ completeRideData }: any) {
           </p>
         )}
         <DialogFooter>
-          <Button disabled={countError} onClick={handleSubmit}>
-            Confirm Booking
-          </Button>
+          {/* <Button disabled={countError} onClick={onCheckout}>
+
+          </Button> */}
+          <Checkout disable={countError}/>
         </DialogFooter>
       </DialogContent>
     </Dialog>

@@ -25,6 +25,9 @@ export default function ProfileLayout({
             <li>
               <ProfileNavLinks href="/profile/add-car">Add car</ProfileNavLinks>
             </li>
+            <li>
+              <ProfileNavLinks href="/profile/rides">Rides</ProfileNavLinks>
+            </li>
           </ul>
         </nav>
       </aside>

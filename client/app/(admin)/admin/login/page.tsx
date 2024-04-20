@@ -15,7 +15,7 @@ type IAdminLoginFormFields =  {
     label: string;
 }
 
-const page = () => {
+const LoginPage = () => {
 
   const router = useRouter();
 
@@ -89,4 +89,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default LoginPage;

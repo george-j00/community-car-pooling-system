@@ -5,7 +5,7 @@ import { fetchUserData } from "@/lib/actions/addCar.action";
 import { setCompleteRideData } from "@/lib/features/ride/rideSlice";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { IRide } from "@/lib/types/IRide";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 
 type RideParams = {
   params: {
@@ -15,32 +15,34 @@ type RideParams = {
 
 const Page = ({ params: { id } }: RideParams) => {
   const dispatch = useAppDispatch();
-
   const allRides: IRide[] = useAppSelector((state) => state?.ride?.allRides);
-
-  if (allRides === null) {
-    console.log("No rides found.");
-    return null;
-  }
-
   const selectedRide = allRides.find((ride) => ride._id === id);
-
-  if (!selectedRide) {
-    console.log("Ride with id", id, "not found.");
-    return null;
-  }
-  const userId = selectedRide?.userId;
-  const rideId=id;
-
+  
   useEffect(() => {
+    if (allRides === null || !selectedRide) {
+      console.log("No rides found or ride not found.");
+      return;
+    }
+
+    const userId = selectedRide?.userId;
+    const rideId = id;
+
     if (userId) {
       const fetchData = async () => {
         const res = await fetchUserData(userId);
-        dispatch(setCompleteRideData({ ...selectedRide,rideId ,...res?.updatedUser }));
+        dispatch(setCompleteRideData({ ...selectedRide, rideId, ...res?.updatedUser }));
       };
       fetchData();
     }
-  }, [userId]);
+  }, [id, allRides, selectedRide, dispatch]);
+
+  if (allRides === null) {
+    return null;
+  }
+
+  if (!selectedRide) {
+    return null;
+  }
 
   return (
     <div className="wrapper">

@@ -11,9 +11,9 @@ export default function Home() {
         <div className="wrapper grid grid-cols-1 gap-5 md:grid-cols-2 2xl:gap-0">
           <div className="flex flex-col justify-center gap-10">
             <h1 className="text-6xl font-bold leading-tight">
-              <span className="text-gray-400">"</span>Community Cruise: <br />
+              <span className="text-gray-400">&quot;</span>Community Cruise: <br />
               Unlocking Mobility <br />
-              Together <span className="text-gray-400">"</span>
+              Together <span className="text-gray-400">&quot;</span>
             </h1>
             <p className="wrapper p-regular-20 md:p-regular-24">
               Explore Your Neighborhood: Discover the Perfect Ride with Our

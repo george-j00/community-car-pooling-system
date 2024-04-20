@@ -22,14 +22,12 @@ export interface ICompleteRide {
     date: string;
     status: string;
   
-    // Additional details (optional)
-    driverLicenseNumber?: string; // Optional property
-    pickupTime?: string; // Optional property
-    dropOffTime?: string; // Optional property
-    duration?: string; // Optional property
-    rate?: number; // Optional property
+    driverLicenseNumber?: string; 
+    pickupTime: string; 
+    dropOffTime: string; 
+    duration: string; 
+    rate: number; 
     seatAvailable: number;
     profileCompletionStatus: string;
-    
     rideId:string;
   }

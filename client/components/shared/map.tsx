@@ -24,35 +24,7 @@ const MapBoxMap = () => {
   const mapRef = useRef<any>();
   const dispatch = useAppDispatch();
 
-  useEffect(() => {
-    if (sourceCoordinators) {
-      {
-        mapRef.current?.flyTo({
-          center: [sourceCoordinators?.longitude, sourceCoordinators?.latitude],
-          duration: 2500,
-        });
-      }
-    }
-  }, [sourceCoordinators]);
-
-  useEffect(() => {
-    if (destinationCoordinators) {
-      {
-        mapRef.current?.flyTo({
-          center: [
-            destinationCoordinators?.longitude,
-            destinationCoordinators?.latitude,
-          ],
-          duration: 2500,
-        });
-      }
-    }
-    if (sourceCoordinators && destinationCoordinators) {
-      getRouteDirections();
-    }
-  }, [destinationCoordinators]);
-
-  const getRouteDirections = async () => {
+  const getRouteDirections = async (dispatch : any) => {
     const res = await axios.get(
       `https://api.mapbox.com/directions/v5/mapbox/driving/${
         sourceCoordinators?.longitude +
@@ -70,41 +42,42 @@ const MapBoxMap = () => {
     console.log(res?.data);
   };
 
+  useEffect(() => {
+    if (sourceCoordinators && destinationCoordinators) {
+      getRouteDirections(dispatch);
+    }
+  }, [sourceCoordinators, destinationCoordinators, dispatch]);
+
   return (
-
     <>
-     <div className="flex items-center h-[75vh]">
-      {userLocation ? (
-        <Map
-          ref={mapRef}
-          mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_ACCESS_KEY}
-          initialViewState={{
-            longitude: userLocation?.longitude,
-            latitude: userLocation?.latitude,
-            zoom: 14,
-          }}
-          style={{ width: 700, height: 500 }}
-          mapStyle="mapbox://styles/mapbox/streets-v9"
-        >
-          <LocationMarker />
+      <div className="flex items-center h-[75vh]">
+        {userLocation ? (
+          <Map
+            ref={mapRef}
+            mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_ACCESS_KEY}
+            initialViewState={{
+              longitude: userLocation?.longitude,
+              latitude: userLocation?.latitude,
+              zoom: 14,
+            }}
+            style={{ width: 700, height: 500 }}
+            mapStyle="mapbox://styles/mapbox/streets-v9"
+          >
+            <LocationMarker />
 
-          {
-            directions?.routes?.length > 0 ? (
+            {directions?.routes?.length > 0 ? (
               <Directions
                 coordinates={directions?.routes[0]?.geometry?.coordinates}
               />
-            ) : null
-          } 
-        </Map>
-      ) : null}
-    </div>
+            ) : null}
+          </Map>
+        ) : null}
+      </div>
 
-    <div className="">
-      <ShowDistanceTime directions={directions?.routes}/>
-    </div>
+      <div className="">
+        <ShowDistanceTime directions={directions?.routes} />
+      </div>
     </>
-   
-    
   );
 };
 

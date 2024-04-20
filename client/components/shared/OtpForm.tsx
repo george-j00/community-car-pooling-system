@@ -164,7 +164,7 @@ export default function OtpForm({ email }: otpFormParams) {
                   </div>
                 ) : (
                   <div className="flex gap-2">
-                    <p>Didn't receive code?</p>
+                    <p>Didn&apos;t receive code?</p>
                     <button onClick={handleResendOtp}>resend otp </button>
                   </div>
                 )}
