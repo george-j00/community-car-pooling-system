@@ -6,7 +6,7 @@ import Stripe from "stripe";
 import setupInterceptors from "../axios";
 import axios, { AxiosError } from "axios";
 
-const baseUrl = "http://localhost:8080/api/orders/book-ride";
+const baseUrl = "http://localhost:8080/api/orders/";
 
 export const checkoutOrder = async (order: CheckoutOrderParams) => {
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
@@ -52,8 +52,45 @@ export const createOrder = async (order: any) => {
     // console.log("the order payyyloooadddd111", order);
 
     // await setupInterceptors();
-    const response = await axios.post(baseUrl, order);
+    const response = await axios.post(`${baseUrl}/book-ride`, order);
     // return response?.data;
+    
+  } catch (error) {
+    const axiosError = error as AxiosError;
+    if (axiosError.response) {
+      const status = axiosError.response.status;
+      return status;
+    }
+  } 
+};
+
+
+export const fetchAllBookedRides = async () => {
+  try {
+    // await setupInterceptors();
+    const response = await axios.get(`${baseUrl}/getAllOrders`);
+    return response?.data;
+    
+  } catch (error) {
+    const axiosError = error as AxiosError;
+    if (axiosError.response) {
+      const status = axiosError.response.status;
+      return status;
+    }
+  } 
+};
+
+type ICompleteParams ={
+  rideId:string;
+  driverId:string;
+  _id:string;
+}
+export const fetchCompleteData = async (payload : ICompleteParams) => {
+  try {
+    // await setupInterceptors();
+    const response = await axios.post(`${baseUrl}/getCompleteData`,payload);
+    return response?.data;
+    
   } catch (error) {
     const axiosError = error as AxiosError;
     if (axiosError.response) {
