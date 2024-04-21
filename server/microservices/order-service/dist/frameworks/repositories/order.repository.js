@@ -20,5 +20,17 @@ class OrderRepository {
             return yield newOrder.save();
         });
     }
+    getAllOrders() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const allOrders = yield this.OrderModel.find();
+            return allOrders;
+        });
+    }
+    getSingleOrder(orderId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const order = yield this.OrderModel.findById(orderId);
+            return order;
+        });
+    }
 }
 exports.OrderRepository = OrderRepository;
