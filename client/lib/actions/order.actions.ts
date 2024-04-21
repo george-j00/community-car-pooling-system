@@ -49,9 +49,9 @@ export const checkoutOrder = async (order: CheckoutOrderParams) => {
 
 export const createOrder = async (order: any) => {
   try {
-    console.log("the order payyyloooadddd111", order);
+    // console.log("the order payyyloooadddd111", order);
 
-    await setupInterceptors();
+    // await setupInterceptors();
     const response = await axios.post(baseUrl, order);
     // return response?.data;
   } catch (error) {
@@ -60,5 +60,5 @@ export const createOrder = async (order: any) => {
       const status = axiosError.response.status;
       return status;
     }
-  }
+  } 
 };
