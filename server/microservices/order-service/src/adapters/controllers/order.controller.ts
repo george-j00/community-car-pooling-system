@@ -6,6 +6,8 @@ export class OrderController {
 
   async create_order(req: Request, res: Response) {
     try {
+      // console.log('this is req body order ', req.body);
+      
       const order = req.body;
       const createOrder = await this.orderUsecase.createOrder(order);
       res.status(200).json(createOrder);

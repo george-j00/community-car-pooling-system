@@ -17,6 +17,7 @@ class OrderController {
     create_order(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                // console.log('this is req body order ', req.body);
                 const order = req.body;
                 const createOrder = yield this.orderUsecase.createOrder(order);
                 res.status(200).json(createOrder);
