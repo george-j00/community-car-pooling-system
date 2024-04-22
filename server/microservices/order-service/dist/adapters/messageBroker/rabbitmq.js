@@ -50,8 +50,6 @@ class RabbitMQService {
                 const responseQueue1 = "response_queue1";
                 const responseQueue2 = "response_queue2";
                 const channel = yield this.ensureChannel();
-                //   const correlationId = this.generateCorrelationId();
-                //   const correlationId2 = this.generateCorrelationId();
                 const rideCorrelationId = this.generateCorrelationId();
                 const driverCorrelationId = this.generateCorrelationId();
                 const message1 = JSON.stringify({ rideId });
@@ -79,8 +77,7 @@ class RabbitMQService {
                     responsePromise1,
                     responsePromise2,
                 ]);
-                console.log("Received response1:", response1);
-                console.log("Received response2:", response2);
+                return Object.assign(Object.assign({}, response1), response2);
             }
             catch (error) {
                 console.error("Error fetching complete order data:", error);
@@ -106,7 +103,6 @@ class RabbitMQService {
                     if (msg && msg.properties.correlationId) {
                         const correlationId = msg.properties.correlationId;
                         const response = JSON.parse(msg.content.toString());
-                        console.log("the response back from ride service on order service ", response);
                         this.handleResponse(correlationId, response);
                     }
                 }, { noAck: true });
@@ -114,7 +110,6 @@ class RabbitMQService {
                     if (msg && msg.properties.correlationId) {
                         const correlationId = msg.properties.correlationId;
                         const response = JSON.parse(msg.content.toString());
-                        console.log("the response back from user service on order service ", response);
                         this.handleResponse(correlationId, response);
                     }
                 }, { noAck: true });

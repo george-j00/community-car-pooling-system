@@ -19,7 +19,9 @@ export class OrderController {
   }
   async getAllOrders(req: Request, res: Response) {
     try {
-      const allOrders = await this.orderUsecase.getAllOrders();
+      const  {userId} = req.body
+      console.log('loggeeddd usserr idd',userId);
+      const allOrders = await this.orderUsecase.getAllOrders(userId);
       res.status(200).json(allOrders);
     } catch (error) {
       res.status(500).send("Error while creating order");
@@ -29,15 +31,31 @@ export class OrderController {
   async getSingleOrder(req: Request, res: Response) {
     try {
       const order = req.body 
-      const {rideId , driverId , orderId} = order
-      const res1 = await this.rabbitMq.fetchCompleteOrder(rideId , driverId)
-      const res2 = await this.orderUsecase.getSingleOrder(orderId);
-      // const completeOrder = {
-      //   ...res1,...res2
-      // } 
-      // console.log(completeOrder);
-       
-      // res.status(200).json(completeOrder);
+      console.log('order',order);
+      
+      // _id is the order id 
+      const {rideId , driverId , _id} = order 
+      const response = await this.rabbitMq.fetchCompleteOrder(rideId , driverId)
+      // const res2 = await this.orderUsecase.getSingleOrder(_id);
+      const {username,pickupTime ,dropOffTime, date ,phoneNumber ,driverLicenseNumber, car} = response 
+      const {carName ,vehicleNumber } = car 
+      const completeRideData = {Driver:username, Pickup_time:pickupTime,DropOff_time:dropOffTime ,Ride_Date:date,driver_mobile:phoneNumber,driver_Licence:driverLicenseNumber, car:carName,Car_number:vehicleNumber}
+
+      console.log('complete ride data',completeRideData);
+      res.status(200).json(completeRideData);
+    } catch (error) {
+      res.status(500).send("Error while creating order");
+      console.log("Error while creating order => ", error);
+    }
+  }
+  async getPassengersList(req: Request, res: Response) {
+    try {
+      // const response = await this.rabbitMq.fetchCompleteOrder()
+      // const res2 = await this.orderUsecase.getSingleOrder(_id);
+      const { rideId , driverId } = req.body
+      console.log('view passengers data',rideId , driverId);
+      const res = this.orderUsecase.getPassengersList(rideId , driverId)
+      // res.status(200).json(completeRideData);
     } catch (error) {
       res.status(500).send("Error while creating order");
       console.log("Error while creating order => ", error);

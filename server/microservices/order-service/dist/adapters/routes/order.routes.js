@@ -17,11 +17,14 @@ class OrderRouter {
         this.router.post("/api/orders/book-ride", (req, res) => {
             this.controller.create_order(req, res);
         });
-        this.router.get("/api/orders/getAllOrders", (req, res) => {
+        this.router.post("/api/orders/getAllOrders", (req, res) => {
             this.controller.getAllOrders(req, res);
         });
         this.router.post("/api/orders/getCompleteData", (req, res) => {
             this.controller.getSingleOrder(req, res);
+        });
+        this.router.post("/api/orders/get-passengers-list", (req, res) => {
+            this.controller.getPassengersList(req, res);
         });
     }
 }

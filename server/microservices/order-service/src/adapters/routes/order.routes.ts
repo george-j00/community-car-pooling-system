@@ -17,14 +17,14 @@ export class OrderRouter {
     this.router.post("/api/orders/book-ride", (req: Request, res: Response) => {
       this.controller.create_order(req, res);
     });
-    this.router.get(
-      "/api/orders/getAllOrders",
-      (req: Request, res: Response) => {
+    this.router.post("/api/orders/getAllOrders",(req: Request, res: Response) => {
         this.controller.getAllOrders(req, res);
-      }
-    );
+      });
     this.router.post("/api/orders/getCompleteData", (req: Request, res: Response) => {
       this.controller.getSingleOrder(req, res);
+    });
+    this.router.post("/api/orders/get-passengers-list", (req: Request, res: Response) => {
+      this.controller.getPassengersList(req, res);
     });
   }
 }

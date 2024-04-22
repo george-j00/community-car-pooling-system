@@ -8,11 +8,14 @@ class OrderUsecase {
     createOrder(order) {
         return this.orderRepository.createOrder(order);
     }
-    getAllOrders() {
-        return this.orderRepository.getAllOrders();
+    getAllOrders(loggedUserId) {
+        return this.orderRepository.getAllOrders(loggedUserId);
     }
     getSingleOrder(orderId) {
         return this.orderRepository.getSingleOrder(orderId);
+    }
+    getPassengersList(rideId, driverId) {
+        return this.orderRepository.getPassengersList(rideId, driverId);
     }
 }
 exports.OrderUsecase = OrderUsecase;

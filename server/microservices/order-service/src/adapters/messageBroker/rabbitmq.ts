@@ -33,8 +33,6 @@ export class RabbitMQService {
       const responseQueue2 = "response_queue2";
 
       const channel = await this.ensureChannel();
-      //   const correlationId = this.generateCorrelationId();
-      //   const correlationId2 = this.generateCorrelationId();
 
       const rideCorrelationId = this.generateCorrelationId();
       const driverCorrelationId = this.generateCorrelationId();
@@ -71,8 +69,7 @@ export class RabbitMQService {
         responsePromise2,
       ]);
       
-      console.log("Received response1:", response1);
-      console.log("Received response2:", response2);
+      return { ...response1, ...response2 }; 
     } catch (error) {
       console.error("Error fetching complete order data:", error);
       throw error;
@@ -100,10 +97,6 @@ export class RabbitMQService {
           if (msg && msg.properties.correlationId) {
             const correlationId = msg.properties.correlationId;
             const response = JSON.parse(msg.content.toString());
-            console.log(
-              "the response back from ride service on order service ",
-              response
-            );
             this.handleResponse(correlationId, response);
           }
         },
@@ -116,10 +109,6 @@ export class RabbitMQService {
           if (msg && msg.properties.correlationId) {
             const correlationId = msg.properties.correlationId;
             const response = JSON.parse(msg.content.toString());
-            console.log(
-              "the response back from user service on order service ",
-              response
-            );
             this.handleResponse(correlationId, response);
           }
         },

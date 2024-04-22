@@ -20,9 +20,9 @@ class OrderRepository {
             return yield newOrder.save();
         });
     }
-    getAllOrders() {
+    getAllOrders(loggedUserId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const allOrders = yield this.OrderModel.find();
+            const allOrders = yield this.OrderModel.find({ userId: loggedUserId });
             return allOrders;
         });
     }
@@ -30,6 +30,12 @@ class OrderRepository {
         return __awaiter(this, void 0, void 0, function* () {
             const order = yield this.OrderModel.findById(orderId);
             return order;
+        });
+    }
+    getPassengersList(rideId, driverId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const users = yield this.OrderModel.find({ driverId: driverId, rideId: rideId }, { _id: 0, userId: 1 });
+            console.log('the userss list', users);
         });
     }
 }
