@@ -1,3 +1,5 @@
+"use server"
+
 import axios, { AxiosError } from "axios";
 import setupInterceptors from "../axios";
 import { getCookie } from "./auth";
@@ -18,8 +20,7 @@ type searchTermParams = {
 
 const baseUrl = "http://localhost:8080/api/users/add-car";
 const baseUrl2 = "http://localhost:8080/api/users/user/update-profile";
-const baseUrl3 = "http://localhost:8080/api/rides/create-ride";
-const baseUrl4 = "http://localhost:8080/api/rides/search-rides";
+const baseUrl3 = "http://localhost:8080/api/rides";
 const baseUrl5 = "http://localhost:8080/api/users/getUser";
 
 export const addCarDetails = async (
@@ -66,7 +67,7 @@ export const createRide = async (rideData: any) => {
     console.log("the payloaddddd", rideData);
 
     await setupInterceptors();
-    const response = await axios.post(baseUrl3, rideData);
+    const response = await axios.post(`${baseUrl3}/create-ride`, rideData);
     return response?.data;
   } catch (error) {
     const axiosError = error as AxiosError;
@@ -89,7 +90,7 @@ export const fetchAllAvailableRides = async (
 
     console.log("fetch ride payloaddd", payload);
 
-    const response = await axios.post(baseUrl4, { payload });
+    const response = await axios.post(`${baseUrl3}/search-rides`, { payload });
     console.log(response?.data);
     return response?.data;
   } catch (error) {
@@ -106,6 +107,20 @@ export const fetchUserData = async (userId: string) => {
 
     await setupInterceptors();
     const response = await axios.get(`${baseUrl5}/${userId}`);
+    console.log(response?.data);
+    return response?.data;
+  } catch (error) {
+    const axiosError = error as AxiosError;
+    if (axiosError.response) {
+      const status = axiosError.response.status;
+      return status;
+    }
+  }
+};
+export const fetchCreatedRides = async (userId:string) => {
+  try {
+    // await setupInterceptors()
+    const response = await axios.post(`${baseUrl3}/created-rides`, { userId:userId });
     console.log(response?.data);
     return response?.data;
   } catch (error) {

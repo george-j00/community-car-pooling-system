@@ -26,7 +26,7 @@ const SearchRide = () => {
   const handleSearch = async  () => {
    
    const res =  await fetchAllAvailableRides(pickupLocation , dropoffLocation);
-  //  dispatch(setAllRidesAvail())
+
   if (res?.length === 0) {
     setIsRidesAvail(false);
     console.log('No available ridess');
@@ -35,7 +35,7 @@ const SearchRide = () => {
      router.push(
       `/rides/available-rides`
     );
-    console.log('available ridess');
+    console.log('available ridess',res);
     setIsRidesAvail(true);
   }
   };

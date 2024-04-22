@@ -65,10 +65,13 @@ export const createOrder = async (order: any) => {
 };
 
 
-export const fetchAllBookedRides = async () => {
+export const fetchAllBookedRides = async (loggedUserId:string) => {
   try {
     // await setupInterceptors();
-    const response = await axios.get(`${baseUrl}/getAllOrders`);
+
+    console.log('booked ride user id ',loggedUserId);
+    
+    const response = await axios.post(`${baseUrl}/getAllOrders`,{userId:loggedUserId});
     return response?.data;
     
   } catch (error) {
@@ -89,6 +92,20 @@ export const fetchCompleteData = async (payload : ICompleteParams) => {
   try {
     // await setupInterceptors();
     const response = await axios.post(`${baseUrl}/getCompleteData`,payload);
+    return response?.data;
+    
+  } catch (error) {
+    const axiosError = error as AxiosError;
+    if (axiosError.response) {
+      const status = axiosError.response.status;
+      return status;
+    }
+  } 
+};
+export const fetchPassengerData = async (rideId : string , driverId:string) => {
+  try {
+    // await setupInterceptors();
+    const response = await axios.post(`${baseUrl}/get-passengers-list`,{rideId:rideId, driverId:driverId});
     return response?.data;
     
   } catch (error) {

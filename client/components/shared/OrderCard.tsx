@@ -11,7 +11,7 @@ import { FcInternal } from "react-icons/fc";
 
 interface bookedRide {
   order: {
-    _id:string;
+    _id: string;
     stripeId: string;
     rideId: string;
     userId: string;
@@ -23,33 +23,42 @@ interface bookedRide {
     createdAt: Date;
   };
 }
+interface RideData {
+  Driver: string;
+  Pickup_time: string;
+  DropOff_time: string;
+  Ride_Date: string;
+  driver_mobile: string;
+  driver_Licence: string;
+  car: string;
+  Car_number: string;
+}
+
 
 const OrderCard = ({ order }: bookedRide) => {
   const [isOpen, setIsOpen] = useState(false);
-  
-  const [bookedRides, setBookedRides] = useState<bookedRide[]>();
-  
-  const {rideId , driverId, _id } = order
-   const payload = {
-        rideId ,
-        driverId,
-        _id
-  }
-  useEffect(() => {
-    const fetchAllRides = async () => {
-      const res = await fetchCompleteData(payload);
-      setBookedRides(res);
-      console.log(res);
-    };
 
-    fetchAllRides();
-  }, []);
+  const [selectedRide, setSelectedRide] = useState<RideData>();
+
+  const { rideId, driverId, _id } = order;
+  const payload = {
+    rideId,
+    driverId,
+    _id,
+  };
+
+  const handleClick = async () => {
+    setIsOpen(true);
+    const res = await fetchCompleteData(payload);
+    setSelectedRide(res);
+    console.log('the complete booked ride data ',res);
+  };
 
   return (
     <>
       <div
-        className="bg-gray-800 text-white p-4 rounded-lg flex hover:bg-gray-900 cursor-pointer"
-        onClick={() => setIsOpen(true)}
+        className="bg-gray-700 text-white p-4 rounded-lg flex hover:bg-gray-800 cursor-pointer"
+        onClick={handleClick}
       >
         <div className="text-3xl mt-2">
           <FcInternal />
@@ -74,7 +83,7 @@ const OrderCard = ({ order }: bookedRide) => {
               </div>
               <div className="flex items-center justify-between">
                 <p>Destination:</p>
-                <p>{order?.source}</p>
+                <p>{order?.destination}</p>
               </div>
               <div className="flex items-center justify-between">
                 <p>Distance:</p>
@@ -84,36 +93,38 @@ const OrderCard = ({ order }: bookedRide) => {
                 <p>Total Amount:</p>
                 <p>₹ {order?.totalAmount}</p>
               </div>
-              {/* {driverName && (
                 <div className="flex items-center justify-between">
-                  <p>Driver Name:</p>
-                  <p>{driverName}</p>
+                  <p>Ride Date:</p>
+                  <p>{selectedRide?.Ride_Date}</p>
                 </div>
-              )} */}
-              {/* {driverPhoneNumber && (
-                <div className="flex items-center justify-between">
-                  <p>Driver Phone Number:</p>
-                  <p>{driverPhoneNumber}</p>
-                </div>
-              )}
-              {pickupTime && (
                 <div className="flex items-center justify-between">
                   <p>Pickup Time:</p>
-                  <p>{pickupTime.toLocaleString()}</p>
+                  <p>{selectedRide?.Pickup_time.toLocaleString()}</p>
                 </div>
-              )}
-              {dropoffTime && (
                 <div className="flex items-center justify-between">
                   <p>Dropoff Time:</p>
-                  <p>{dropoffTime.toLocaleString()}</p>
+                  <p>{selectedRide?.DropOff_time.toLocaleString()}</p>
                 </div>
-              )}
-              {date && (
                 <div className="flex items-center justify-between">
-                  <p>Date:</p>
-                  <p>{date.toLocaleDateString()}</p>
+                  <p>Car:</p>
+                  <p>{selectedRide?.car}</p>
                 </div>
-              )} */}
+                <div className="flex items-center justify-between">
+                  <p>Vehicle Number :</p>
+                  <p>{selectedRide?.Car_number}</p>
+                </div>
+                <div className="flex items-center justify-between">
+                  <p>Driver Name:</p>
+                  <p>{selectedRide?.Driver}</p>
+                </div>
+                <div className="flex items-center justify-between">
+                  <p>Driver Mobile:</p>
+                  <p>{selectedRide?.driver_mobile}</p>
+                </div>
+                <div className="flex items-center justify-between">
+                  <p>Driver's DL ID :</p>
+                  <p>{selectedRide?.driver_Licence}</p>
+                </div>
             </div>
           </DialogDescription>
         </DialogContent>

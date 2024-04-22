@@ -172,7 +172,7 @@ function RideCreationForm() {
       const res = await createRide(rideData)
 
       if (res) {
-        router.push(`/rides/created-ride/${res?._id}`)
+        router.push(`/profile/created-rides`)
       }
     };
     
