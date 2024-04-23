@@ -42,8 +42,6 @@ const AddCar =  () => {
   let userId  = "";
 
   const user = useAppSelector((state) => state?.auth?.user);
- 
-
   if (user) {
     const userWithUsername = user as {
       _id: string;

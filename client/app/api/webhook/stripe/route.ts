@@ -31,6 +31,7 @@ export async function POST(request: Request) {
       source: metadata?.source || '',
       destination: metadata?.destination || '',
       distance: metadata?.distance || '',
+      bookedSeatsCount:metadata?.bookedSeatsCount,
       totalAmount: amount_total ? (amount_total / 100).toString() : '0',
       createdAt: new Date(),
     }

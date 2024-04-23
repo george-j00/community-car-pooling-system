@@ -7,6 +7,7 @@ export type CheckoutOrderParams = {
     rate: number
     distance: string
     duration: string
+    bookedSeatsCount:number
   }
   
   export type CreateOrderParams = {

@@ -6,6 +6,10 @@ import ProfileAvatar from "./Avatar";
 import { ICompleteRide } from "@/lib/types/ICompleteRide";
 
 const CompleteRideData = ({ ride }: any) => {  
+
+  const rate = Number(ride?.rate) / 4
+  const reducedRate = rate.toFixed(2)
+
   return (
     <>
       <div className="bg-gray-100  w-full p-5 flex flex-col gap-3 rounded-lg shadow-md">
@@ -51,7 +55,7 @@ const CompleteRideData = ({ ride }: any) => {
         </div>
         <div className="flex flex-row text-center mt-5 justify-around">
         <p className="p-bold-20 rounded-full bg-green-500/10 px-5 py-2 text-green-700">
-        {ride?.rate} ₹
+        {reducedRate} ₹
         </p>
             <p className="text-blue-500 font-bold mt-2">{ride?.distance} Km</p>
             <p className="text-yellow-500 font-bold mt-2">Seat available : {ride?.seatAvailable}</p>

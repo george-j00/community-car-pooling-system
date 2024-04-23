@@ -38,6 +38,7 @@ export function BookSeat({ completeRideData }: any) {
       userId: completeRideData?.userId,
       distance: completeRideData?.distance,
       duration: completeRideData?.duration,
+      bookedSeatCount : count
     };
 
     console.log("ride confirm payload", payload);
@@ -76,10 +77,8 @@ export function BookSeat({ completeRideData }: any) {
           </p>
         )}
         <DialogFooter>
-          {/* <Button disabled={countError} onClick={onCheckout}>
-
-          </Button> */}
-          <Checkout disable={countError}/>
+          {/* checkout to stripe  */}
+          <Checkout count={count} disable={countError}/>
         </DialogFooter>
       </DialogContent>
     </Dialog>

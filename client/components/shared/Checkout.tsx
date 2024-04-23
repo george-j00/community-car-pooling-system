@@ -9,7 +9,7 @@ import { checkoutOrder } from '@/lib/actions/order.actions';
  
 loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
 
-const Checkout = ({disable } : any) => {
+const Checkout = ({disable , count} : any) => {
 
     let userId = "";
     const user = useAppSelector((state) => state?.auth?.user);
@@ -44,7 +44,8 @@ const Checkout = ({disable } : any) => {
       driverId: completeRideData?.userId,
       userId:userId,
       rideId:completeRideData?.rideId,
-      rate:completeRideData?.rate
+      rate:completeRideData?.rate,
+      bookedSeatsCount:count
     };
 
     await checkoutOrder(order)

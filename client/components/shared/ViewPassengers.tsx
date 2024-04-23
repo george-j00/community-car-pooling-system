@@ -13,6 +13,7 @@ import { DialogTrigger } from "@radix-ui/react-dialog";
 import { useEffect, useState } from "react";
 import { FcInternal } from "react-icons/fc";
 import { Button } from "../ui/button";
+import axios from "axios";
 
 interface IRide {
   ride: {
@@ -30,26 +31,33 @@ interface IRide {
   };
 }
 
+interface IPassenger {
+  username: string;
+  phoneNumber: string;
+}
+
 const ViewRideDetails = ({ ride }: IRide) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const [selectedRide, setSelectedRide] = useState<any>();
+  const [passengersList, setPassengersList] = useState<IPassenger[]>();
 
-  // const { rideId, driverId, _id } = passengers;
-
-  // const payload = {
-  //   rideId,
-  //   driverId,
-  //   _id,
-  // };
+  const rideId = ride?._id;
+  const driverId = ride?.userId;
 
   const handleClick = async () => {
-    setIsOpen(true);
-    const rideId = ride?._id;
-    const driverId = ride?.userId;    
-    const res = await fetchPassengerData(rideId,driverId);
-    //   setSelectedRide(res);
-    //   console.log('the complete booked ride data ',res);
+    try {
+      setIsOpen(true);
+      // const res = await fetchPassengerData(rideId,driverId);
+      const res = await axios.post(
+        "http://localhost:8080/api/orders/get-passengers-list",
+        { rideId: rideId, driverId: driverId }
+      );
+      console.log('passengers response ',res?.data);
+      
+      setPassengersList(res?.data);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -75,14 +83,18 @@ const ViewRideDetails = ({ ride }: IRide) => {
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Order Details</DialogTitle>
+            <DialogTitle>Booked Passengers</DialogTitle>
           </DialogHeader>
           <DialogDescription>
             <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <p>Source:</p>
-                <p>{"sourcee"}</p>
+              {passengersList &&  passengersList.length > 0 ?  passengersList?.map((passenger, index) => (
+                <div key={index} className="bg-white p-4 rounded-md shadow-md">
+                <p className="font-bold">{passenger.username}</p>
+                <p>{passenger.phoneNumber}</p>
               </div>
+              )) : ( <> 
+                <p>No Seats are booked yet </p>
+              </> )}
             </div>
           </DialogDescription>
         </DialogContent>

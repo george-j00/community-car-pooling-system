@@ -11,7 +11,8 @@ const baseUrl = "http://localhost:8080/api/orders/";
 export const checkoutOrder = async (order: CheckoutOrderParams) => {
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
-  const price = Number(order?.rate) * 100;
+
+  const price = Number(order?.rate) * 100 / 4;
 
   try {
     // Create Checkout Sessions from body params.
@@ -34,7 +35,8 @@ export const checkoutOrder = async (order: CheckoutOrderParams) => {
         driverId: order.driverId,
         source: order.source,
         destination: order.destination,
-        distance: order.distance
+        distance: order.distance,
+        bookedSeatsCount: order.bookedSeatsCount,
       },
       mode: "payment",
       success_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/profile/rides`,
@@ -45,7 +47,6 @@ export const checkoutOrder = async (order: CheckoutOrderParams) => {
     throw error;
   }
 };
-
 
 export const createOrder = async (order: any) => {
   try {
@@ -63,7 +64,6 @@ export const createOrder = async (order: any) => {
     }
   } 
 };
-
 
 export const fetchAllBookedRides = async (loggedUserId:string) => {
   try {
@@ -88,6 +88,7 @@ type ICompleteParams ={
   driverId:string;
   _id:string;
 }
+
 export const fetchCompleteData = async (payload : ICompleteParams) => {
   try {
     // await setupInterceptors();
@@ -102,12 +103,12 @@ export const fetchCompleteData = async (payload : ICompleteParams) => {
     }
   } 
 };
+
 export const fetchPassengerData = async (rideId : string , driverId:string) => {
   try {
     // await setupInterceptors();
     const response = await axios.post(`${baseUrl}/get-passengers-list`,{rideId:rideId, driverId:driverId});
     return response?.data;
-    
   } catch (error) {
     const axiosError = error as AxiosError;
     if (axiosError.response) {
@@ -116,3 +117,6 @@ export const fetchPassengerData = async (rideId : string , driverId:string) => {
     }
   } 
 };
+
+
+

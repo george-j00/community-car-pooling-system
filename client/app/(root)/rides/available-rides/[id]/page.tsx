@@ -5,6 +5,7 @@ import { fetchUserData } from "@/lib/actions/addCar.action";
 import { setCompleteRideData } from "@/lib/features/ride/rideSlice";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { IRide } from "@/lib/types/IRide";
+import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 
 type RideParams = {
@@ -17,7 +18,7 @@ const Page = ({ params: { id } }: RideParams) => {
   const dispatch = useAppDispatch();
   const allRides: IRide[] = useAppSelector((state) => state?.ride?.allRides);
   const selectedRide = allRides.find((ride) => ride._id === id);
-  
+  const router = useRouter()
   useEffect(() => {
     if (allRides === null || !selectedRide) {
       console.log("No rides found or ride not found.");
@@ -37,11 +38,11 @@ const Page = ({ params: { id } }: RideParams) => {
   }, [id, allRides, selectedRide, dispatch]);
 
   if (allRides === null) {
-    return null;
+    router.push('/');
   }
 
   if (!selectedRide) {
-    return null;
+    router.push('/');
   }
 
   return (
