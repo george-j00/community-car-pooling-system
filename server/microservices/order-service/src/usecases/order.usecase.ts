@@ -9,7 +9,7 @@ export class OrderUsecase implements IOrderUsecase {
     return this.orderRepository.createOrder(order);
   }
 
-  getAllOrders(loggedUserId:string): Promise<OrderEntity[]> {
+    getAllOrders(loggedUserId:string): Promise<OrderEntity[]> {
     return this.orderRepository.getAllOrders(loggedUserId);
   }
   getSingleOrder(orderId:string): Promise<OrderEntity> {

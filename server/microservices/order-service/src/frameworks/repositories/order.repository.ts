@@ -14,15 +14,15 @@ export class OrderRepository implements IOrderUsecase {
  async getAllOrders(loggedUserId:string): Promise<OrderEntity[]> {
     const allOrders = await this.OrderModel.find({userId:loggedUserId}); 
     return allOrders;
-  }
+  } 
  async getSingleOrder(orderId : string): Promise<any> {
     const order = await this.OrderModel.findById(orderId); 
-    return order;
+    const bookedSeats  = order?.bookedSeatsCount
+    return bookedSeats;
   }
   async getPassengersList(rideId: string, driverId: string): Promise<any> {
    const users = await this.OrderModel.find({driverId:driverId , rideId:rideId},{_id:0,userId:1})
-
-   console.log('the userss list',users);
+    return users
     
   } 
 } 

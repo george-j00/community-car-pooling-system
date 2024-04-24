@@ -10,5 +10,6 @@ export interface IOrderSchema extends Document {
     destination: string;
     distance: string;
     totalAmount: string;
+    bookedSeatsCount: number;
     createdAt: Date;
   }

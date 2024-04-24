@@ -29,13 +29,14 @@ class OrderRepository {
     getSingleOrder(orderId) {
         return __awaiter(this, void 0, void 0, function* () {
             const order = yield this.OrderModel.findById(orderId);
-            return order;
+            const bookedSeats = order === null || order === void 0 ? void 0 : order.bookedSeatsCount;
+            return bookedSeats;
         });
     }
     getPassengersList(rideId, driverId) {
         return __awaiter(this, void 0, void 0, function* () {
             const users = yield this.OrderModel.find({ driverId: driverId, rideId: rideId }, { _id: 0, userId: 1 });
-            console.log('the userss list', users);
+            return users;
         });
     }
 }

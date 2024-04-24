@@ -85,6 +85,52 @@ class RabbitMQService {
             }
         });
     }
+    fetchPassengersData(passengersList) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const passengerRequestQueue = "passenger_queue";
+                const passengerResponseQueue = "passenger_response_queue";
+                const channel = yield this.ensureChannel();
+                yield (channel === null || channel === void 0 ? void 0 : channel.assertQueue(passengerRequestQueue, { durable: false }));
+                yield (channel === null || channel === void 0 ? void 0 : channel.assertQueue(passengerResponseQueue, { durable: false }));
+                this.consumeResponseQueue();
+                const passengerCorrelationId = this.generateCorrelationId();
+                const passengerMessage = JSON.stringify({ passengersList });
+                const passengerResponsePromise = new Promise((resolve) => {
+                    this.correlationIdMap.set(passengerCorrelationId, resolve);
+                });
+                channel === null || channel === void 0 ? void 0 : channel.sendToQueue(passengerRequestQueue, Buffer.from(passengerMessage), {
+                    correlationId: passengerCorrelationId,
+                    replyTo: passengerResponseQueue,
+                });
+                const passengerResponse = yield passengerResponsePromise;
+                return passengerResponse;
+            }
+            catch (error) {
+                console.error("Error fetching passenger data:", error);
+                throw error;
+            }
+        });
+    }
+    reduceSeatAvailability(seatCount, rideId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const channel = yield this.ensureChannel();
+                const queue = 'seatAvailabilityQueue';
+                yield (channel === null || channel === void 0 ? void 0 : channel.assertQueue(queue, { durable: true }));
+                const payload = {
+                    seatCount: seatCount,
+                    rideId: rideId,
+                };
+                channel === null || channel === void 0 ? void 0 : channel.sendToQueue(queue, Buffer.from(JSON.stringify(payload)));
+                console.log('The seat count passed successfully');
+            }
+            catch (error) {
+                console.error('Failed to publish reduce seat count function:', error);
+                throw error;
+            }
+        });
+    }
     generateCorrelationId() {
         return Math.random().toString() + Date.now().toString();
     }
@@ -111,6 +157,14 @@ class RabbitMQService {
                         const correlationId = msg.properties.correlationId;
                         const response = JSON.parse(msg.content.toString());
                         this.handleResponse(correlationId, response);
+                    }
+                }, { noAck: true });
+                channel === null || channel === void 0 ? void 0 : channel.consume("passenger_response_queue", (msg) => {
+                    if (msg && msg.properties.correlationId) {
+                        const correlationId = msg.properties.correlationId;
+                        const response = JSON.parse(msg.content.toString());
+                        console.log('passengers data response ', response);
+                        this.handleResponse(correlationId, response); // Existing code for handling response
                     }
                 }, { noAck: true });
             }

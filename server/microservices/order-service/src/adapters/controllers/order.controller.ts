@@ -10,7 +10,11 @@ export class OrderController {
       // console.log('this is req body order ', req.body);
       
       const order = req.body;
+      const { bookedSeatsCount , rideId } = order;
       const createOrder = await this.orderUsecase.createOrder(order);
+      if (createOrder) {
+        this.rabbitMq.reduceSeatAvailability(bookedSeatsCount , rideId)
+      }
       res.status(200).json(createOrder);
     } catch (error) {
       res.status(500).send("Error while creating order");
@@ -36,10 +40,10 @@ export class OrderController {
       // _id is the order id 
       const {rideId , driverId , _id} = order 
       const response = await this.rabbitMq.fetchCompleteOrder(rideId , driverId)
-      // const res2 = await this.orderUsecase.getSingleOrder(_id);
+      const bookedSeatCount = await this.orderUsecase.getSingleOrder(_id);
       const {username,pickupTime ,dropOffTime, date ,phoneNumber ,driverLicenseNumber, car} = response 
       const {carName ,vehicleNumber } = car 
-      const completeRideData = {Driver:username, Pickup_time:pickupTime,DropOff_time:dropOffTime ,Ride_Date:date,driver_mobile:phoneNumber,driver_Licence:driverLicenseNumber, car:carName,Car_number:vehicleNumber}
+      const completeRideData = {Driver:username, Pickup_time:pickupTime,DropOff_time:dropOffTime ,Ride_Date:date,driver_mobile:phoneNumber,driver_Licence:driverLicenseNumber, car:carName,Car_number:vehicleNumber ,bookedSeatCount : bookedSeatCount}
 
       console.log('complete ride data',completeRideData);
       res.status(200).json(completeRideData);
@@ -53,9 +57,9 @@ export class OrderController {
       // const response = await this.rabbitMq.fetchCompleteOrder()
       // const res2 = await this.orderUsecase.getSingleOrder(_id);
       const { rideId , driverId } = req.body
-      console.log('view passengers data',rideId , driverId);
-      const res = this.orderUsecase.getPassengersList(rideId , driverId)
-      // res.status(200).json(completeRideData);
+      const response = await this.orderUsecase.getPassengersList(rideId , driverId)
+       const passengersData = await this.rabbitMq.fetchPassengersData(response)       
+      res.status(200).json(passengersData);
     } catch (error) {
       res.status(500).send("Error while creating order");
       console.log("Error while creating order => ", error);

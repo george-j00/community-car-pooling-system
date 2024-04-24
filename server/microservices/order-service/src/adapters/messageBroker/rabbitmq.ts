@@ -76,6 +76,53 @@ export class RabbitMQService {
     }
   }
 
+  async fetchPassengersData(passengersList: any[]) {
+    try {
+      const passengerRequestQueue = "passenger_queue";
+      const passengerResponseQueue = "passenger_response_queue";
+
+      const channel = await this.ensureChannel();
+
+      await channel?.assertQueue(passengerRequestQueue, { durable: false });
+      await channel?.assertQueue(passengerResponseQueue, { durable: false });
+      this.consumeResponseQueue();
+      const passengerCorrelationId = this.generateCorrelationId();
+      const passengerMessage = JSON.stringify({ passengersList });
+
+      const passengerResponsePromise = new Promise<any>((resolve) => {
+        this.correlationIdMap.set(passengerCorrelationId, resolve);
+      });
+
+      channel?.sendToQueue(passengerRequestQueue, Buffer.from(passengerMessage), {
+        correlationId: passengerCorrelationId,
+        replyTo: passengerResponseQueue,
+      });
+
+      const passengerResponse = await passengerResponsePromise;
+      return passengerResponse;
+    } catch (error) {
+      console.error("Error fetching passenger data:", error);
+      throw error;
+    }
+  }
+
+  async reduceSeatAvailability(seatCount: string , rideId:string) {
+    try {
+        const channel = await this.ensureChannel();
+        const queue = 'seatAvailabilityQueue';
+        await channel?.assertQueue(queue, { durable: true });
+        const payload = {
+          seatCount:seatCount,
+          rideId:rideId,
+        }
+        channel?.sendToQueue(queue, Buffer.from(JSON.stringify(payload)));
+        console.log('The seat count passed successfully');
+    } catch (error) {
+        console.error('Failed to publish reduce seat count function:', error);
+        throw error;
+    }
+}
+
   private generateCorrelationId(): string {
     return Math.random().toString() + Date.now().toString();
   }
@@ -110,6 +157,19 @@ export class RabbitMQService {
             const correlationId = msg.properties.correlationId;
             const response = JSON.parse(msg.content.toString());
             this.handleResponse(correlationId, response);
+          }
+        },
+        { noAck: true }
+      );
+      channel?.consume(
+        "passenger_response_queue",
+        (msg) => {
+          if (msg && msg.properties.correlationId) {
+            const correlationId = msg.properties.correlationId;
+            const response = JSON.parse(msg.content.toString());
+            console.log('passengers data response ',response);
+            
+            this.handleResponse(correlationId, response); // Existing code for handling response
           }
         },
         { noAck: true }
