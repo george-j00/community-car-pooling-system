@@ -39,5 +39,41 @@ class RideRepository {
             }
         });
     }
+    getRideById(rideId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const ride = yield this.RideModel.findById(rideId);
+                return ride;
+            }
+            catch (error) {
+                console.error("Error fetching ride:", error);
+                throw new Error("Error fetching ride");
+            }
+        });
+    }
+    getAllCreatedRides(userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const ride = yield this.RideModel.find({ userId: userId });
+                return ride;
+            }
+            catch (error) {
+                console.error("Error fetching created rides:", error);
+                throw new Error("Error fetching ride");
+            }
+        });
+    }
+    reduceSeatAvailable(data) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { rideId, seatCount } = data;
+            console.log('ride id and seat count ', rideId, seatCount);
+            const newRide = yield this.RideModel.findById(rideId);
+            if (newRide && (newRide === null || newRide === void 0 ? void 0 : newRide.seatAvailable)) {
+                newRide.seatAvailable -= seatCount;
+            }
+            yield (newRide === null || newRide === void 0 ? void 0 : newRide.save());
+            console.log('reduces seat availability', newRide);
+        });
+    }
 }
 exports.RideRepository = RideRepository;

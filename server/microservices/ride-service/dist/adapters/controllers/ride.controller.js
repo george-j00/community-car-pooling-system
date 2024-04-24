@@ -40,5 +40,18 @@ class RideController {
             }
         });
     }
+    getAllCreatedRides(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { userId } = req.body;
+                const availableRides = yield this.rideUsecase.getAllCreatedRides(userId);
+                res.status(200).json(availableRides);
+            }
+            catch (error) {
+                res.status(500).send("Error while fetching all the available rides");
+                console.log("Error while fetching available rides => ", error);
+            }
+        });
+    }
 }
 exports.RideController = RideController;

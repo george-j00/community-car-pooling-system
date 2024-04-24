@@ -3,13 +3,15 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import { start } from 'simple-auth-connection';
-import { rideRouter } from '../adapters/routes/ride.routes';
+import { RideRouter, rideRouter } from '../adapters/routes/ride.routes';
 
 dotenv.config();
+const rideObj = new RideRouter()
 const app : Express = express();
 const port = process.env.PORT;
 
 start(process.env.MONGODB_URI!)
+rideObj.rabbitMq()
 app.use(cookieParser());
 app.use(cors());
 

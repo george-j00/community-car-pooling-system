@@ -24,4 +24,14 @@ export class RideController {
       console.log("Error while fetching available rides => ", error);
     }
   }
+  async getAllCreatedRides(req: Request, res: Response) {
+    try {
+      const { userId } = req.body;      
+      const availableRides = await this.rideUsecase.getAllCreatedRides(userId);
+      res.status(200).json(availableRides)
+    } catch (error) {
+      res.status(500).send("Error while fetching all the available rides");
+      console.log("Error while fetching available rides => ", error);
+    }
+  }
 }

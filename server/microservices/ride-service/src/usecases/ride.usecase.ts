@@ -11,5 +11,15 @@ export class RideUsecase implements IRideUsecase {
   searchRides(searchParams:any): Promise<RideEntity[]> {
     return this.rideRepository.searchRides(searchParams);
   } 
+  getRideById(rideId: string): Promise<RideEntity> {
+    return this.rideRepository.getRideById(rideId);
+  }
+  getAllCreatedRides(userId: string): Promise<RideEntity[]> {
+    return this.rideRepository.getAllCreatedRides(userId);
+  }
+  reduceSeatAvailable(data:any): Promise<void> {
+    return this.rideRepository.reduceSeatAvailable(data);
+  }
+
 }
  
