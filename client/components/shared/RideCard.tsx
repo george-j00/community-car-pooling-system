@@ -7,7 +7,7 @@ const RideCard = ({ride} : any) => {
   const rate = Number(ride?.rate) / 4
   const reducedRate = rate.toFixed(2)
 
-
+    
   return (
     <>
         <div className="bg-gray-100  w-full p-5 flex flex-col gap-3 rounded-lg shadow-md hover:bg-gray-50">

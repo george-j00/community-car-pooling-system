@@ -32,6 +32,7 @@ interface RideData {
   driver_Licence: string;
   car: string;
   Car_number: string;
+  bookedSeatCount:number;
 }
 
 
@@ -88,6 +89,10 @@ const OrderCard = ({ order }: bookedRide) => {
               <div className="flex items-center justify-between">
                 <p>Distance:</p>
                 <p>{order?.distance} Km</p>
+              </div>
+              <div className="flex items-center justify-between">
+                <p>Seats booked:</p>
+                <p>{selectedRide?.bookedSeatCount}</p>
               </div>
               <div className="flex items-center justify-between">
                 <p>Total Amount:</p>

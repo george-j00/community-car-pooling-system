@@ -44,7 +44,7 @@ const Checkout = ({disable , count} : any) => {
       driverId: completeRideData?.userId,
       userId:userId,
       rideId:completeRideData?.rideId,
-      rate:completeRideData?.rate,
+      rate:completeRideData?.rate,  
       bookedSeatsCount:count
     };
 

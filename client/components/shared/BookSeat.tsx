@@ -16,7 +16,7 @@ import Checkout from "./Checkout";
 
 export function BookSeat({ completeRideData }: any) {
   const capacity = completeRideData?.seatAvailable;
-
+  
   const [count, setCount] = useState<number>(1);
   const [countError, setCountError] = useState<boolean>(false);
 

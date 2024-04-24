@@ -11,8 +11,8 @@ const baseUrl = "http://localhost:8080/api/orders/";
 export const checkoutOrder = async (order: CheckoutOrderParams) => {
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
-
-  const price = Number(order?.rate) * 100 / 4;
+  const seatCount = order?.bookedSeatsCount
+  const price = Math.floor(Number(order?.rate) * 100 / 4) * seatCount;
 
   try {
     // Create Checkout Sessions from body params.
@@ -23,7 +23,7 @@ export const checkoutOrder = async (order: CheckoutOrderParams) => {
             currency: "inr",
             unit_amount: price,
             product_data: {
-              name: `${order.source} to  ${order.destination}`,
+              name: `${order.source} to  ${order.destination} (Booking for ${seatCount} seat)`,
             },
           },
           quantity: 1,
