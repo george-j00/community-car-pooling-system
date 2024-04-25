@@ -2,8 +2,7 @@
 
 import CreateRideForm from "@/components/shared/CreateRide";
 import MapBoxMap from "@/components/shared/map";
-import { useEffect, useState } from "react";
-import { number } from "zod";
+
 
 const page = () => {
  
