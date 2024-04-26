@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { useAppSelector } from "@/lib/hooks";
 import Image from "next/image";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export default function Home() {
