@@ -8,4 +8,6 @@ export interface IUserCase {
   checkUserExistence(email : string): Promise<any>;
   getAllUsers(): Promise<any>;
   banUser(userId : string): Promise<any>;
+  getUser(userId : string): Promise<any>;
+  getPassengersData(passengersList:any): Promise<any>;
 }

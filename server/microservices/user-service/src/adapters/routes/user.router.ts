@@ -31,9 +31,11 @@ export class UserRouter {
       },
     );
     this.router.post("/api/users/user/update-profile",(req: Request, res: Response) => {
-        this.userController.updateProfile(req, res);
-        // console.log(req.body);
-        
+        this.userController.updateProfile(req, res);        
+      }
+    );
+    this.router.get("/api/users/getUser/:userId",(req: Request, res: Response) => {
+        this.userController.getUser(req, res);        
       }
     );
   }
@@ -42,6 +44,8 @@ export class UserRouter {
     await this.consumerMessage.userRegConsumer();
     await this.consumerMessage.checkUserExistence();
     await this.consumerMessage.userLoginConsumer();
+    await this.consumerMessage.fetchUserConsumer();
+    await this.consumerMessage.fetchPassengersData();
   }
 }
 

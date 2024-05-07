@@ -45,7 +45,7 @@ class rabbitmq {
                 yield this.Channel.consume(queue, (msg) => {
                     if (msg !== null && msg.content) {
                         try {
-                            console.log('row message ', msg);
+                            console.log("row message ", msg);
                             const data = JSON.parse(msg.content.toString());
                             console.log("Received message:", data);
                             this.userUsecases.register(data);
@@ -68,16 +68,16 @@ class rabbitmq {
                 yield this.initialize();
             }
             if (this.Channel) {
-                const responseQueue = 'response_queue';
-                const requestQueue = 'user_email_check_queue';
+                const responseQueue = "response_queue";
+                const requestQueue = "user_email_check_queue";
                 yield this.Channel.assertQueue(responseQueue, { durable: false });
                 yield this.Channel.assertQueue(requestQueue, { durable: false });
                 this.Channel.consume(requestQueue, (msg) => __awaiter(this, void 0, void 0, function* () {
                     if (msg !== null && msg.content) {
                         try {
-                            console.log('Raw user existence email:', msg);
+                            console.log("Raw user existence email:", msg);
                             const email = JSON.parse(msg.content.toString());
-                            console.log('Received email :', email);
+                            console.log("Received email :", email);
                             const existingUser = yield this.userUsecases.checkUserExistence(email);
                             const correlationId = msg.properties.correlationId;
                             const responseQueue = msg.properties.replyTo;
@@ -86,12 +86,12 @@ class rabbitmq {
                                 yield this.Channel.sendToQueue(responseQueue, Buffer.from(responseMessage), {
                                     correlationId,
                                 });
-                                console.log('User existence response sent:', responseMessage);
+                                console.log("User existence response sent:", responseMessage);
                             }
                         }
                         catch (error) {
-                            console.error('Error parsing user existence message content:', error);
-                            console.log('Raw user existence message content:', msg.content.toString());
+                            console.error("Error parsing user existence message content:", error);
+                            console.log("Raw user existence message content:", msg.content.toString());
                         }
                     }
                 }), { noAck: true });
@@ -107,15 +107,15 @@ class rabbitmq {
                 yield this.initialize();
             }
             if (this.Channel) {
-                yield this.Channel.assertQueue('response_queue', { durable: false });
-                const queue = 'login_queue';
+                yield this.Channel.assertQueue("response_queue", { durable: false });
+                const queue = "login_queue";
                 yield this.Channel.assertQueue(queue, { durable: false });
                 this.Channel.consume(queue, (msg) => __awaiter(this, void 0, void 0, function* () {
                     if (msg !== null && msg.content) {
                         try {
-                            console.log('Raw login message:', msg);
+                            console.log("Raw login message:", msg);
                             const loginData = JSON.parse(msg.content.toString());
-                            console.log('Received login message:', loginData);
+                            console.log("Received login message:", loginData);
                             const { email, password } = loginData;
                             const loginResult = yield this.userUsecases.login(email, password);
                             const correlationId = msg.properties.correlationId;
@@ -125,12 +125,87 @@ class rabbitmq {
                                 yield this.Channel.sendToQueue(responseQueue, Buffer.from(responseMessage), {
                                     correlationId,
                                 });
-                                console.log('Login response sent:', responseMessage);
+                                console.log("Login response sent:", responseMessage);
                             }
                         }
                         catch (error) {
-                            console.error('Error parsing login message content:', error);
-                            console.log('Raw login message content:', msg.content.toString());
+                            console.error("Error parsing login message content:", error);
+                            console.log("Raw login message content:", msg.content.toString());
+                        }
+                    }
+                }), { noAck: true });
+            }
+            else {
+                console.error("Failed to create a channel");
+            }
+        });
+    }
+    fetchUserConsumer() {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!this.Channel) {
+                yield this.initialize();
+            }
+            if (this.Channel) {
+                yield this.Channel.assertQueue("response_queue2", { durable: false });
+                const queue = "driver_queue";
+                yield this.Channel.assertQueue(queue, { durable: false });
+                this.Channel.consume(queue, (msg) => __awaiter(this, void 0, void 0, function* () {
+                    if (msg !== null && msg.content) {
+                        try {
+                            console.log("Raw message with driver id :", msg);
+                            const driverUserData = JSON.parse(msg.content.toString());
+                            console.log("Received driver id message:", driverUserData);
+                            const { driverId } = driverUserData;
+                            const userData = yield this.userUsecases.getUser(driverId);
+                            const correlationId = msg.properties.correlationId;
+                            const responseQueue = msg.properties.replyTo;
+                            if (correlationId && responseQueue) {
+                                const responseMessage = JSON.stringify(userData);
+                                yield this.Channel.sendToQueue(responseQueue, Buffer.from(responseMessage), {
+                                    correlationId,
+                                });
+                                console.log("Driver response sent:", responseMessage);
+                            }
+                        }
+                        catch (error) {
+                            console.error("Error parsing driver id  message content:", error);
+                            console.log("Raw driver message content:", msg.content.toString());
+                        }
+                    }
+                }), { noAck: true });
+            }
+            else {
+                console.error("Failed to create a channel");
+            }
+        });
+    }
+    fetchPassengersData() {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!this.Channel) {
+                yield this.initialize();
+            }
+            if (this.Channel) {
+                yield this.Channel.assertQueue("passenger_response_queue", { durable: false });
+                const queue = "passenger_queue";
+                yield this.Channel.assertQueue(queue, { durable: false });
+                this.Channel.consume(queue, (msg) => __awaiter(this, void 0, void 0, function* () {
+                    if (msg !== null && msg.content) {
+                        try {
+                            const passengersUserIds = JSON.parse(msg.content.toString());
+                            const passengersData = yield this.userUsecases.getPassengersData(passengersUserIds);
+                            const correlationId = msg.properties.correlationId;
+                            const responseQueue = msg.properties.replyTo;
+                            if (correlationId && responseQueue) {
+                                const responseMessage = JSON.stringify(passengersData);
+                                yield this.Channel.sendToQueue(responseQueue, Buffer.from(responseMessage), {
+                                    correlationId,
+                                });
+                                console.log("passengers response sent:", responseMessage);
+                            }
+                        }
+                        catch (error) {
+                            console.error("Error parsing driver id  message content:", error);
+                            console.log("Raw driver message content:", msg.content.toString());
                         }
                     }
                 }), { noAck: true });

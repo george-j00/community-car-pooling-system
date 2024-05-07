@@ -28,6 +28,13 @@ export class UserUsecase implements IUserCase{
     updateProfile(userId : string , data : any): Promise<any> {
       return this.userRepository.updateProfile(userId , data);
     }
+    getUser(userId : string): Promise<any> {
+      return this.userRepository.getUser(userId);
+    }
+    getPassengersData(passengersList:any): Promise<any> {
+      return this.userRepository.getPassengersData(passengersList);
+    }
+  
  
 
 }   

@@ -37,7 +37,9 @@ class UserRouter {
         });
         this.router.post("/api/users/user/update-profile", (req, res) => {
             this.userController.updateProfile(req, res);
-            // console.log(req.body);
+        });
+        this.router.get("/api/users/getUser/:userId", (req, res) => {
+            this.userController.getUser(req, res);
         });
     }
     rabbitMq() {
@@ -45,6 +47,8 @@ class UserRouter {
             yield this.consumerMessage.userRegConsumer();
             yield this.consumerMessage.checkUserExistence();
             yield this.consumerMessage.userLoginConsumer();
+            yield this.consumerMessage.fetchUserConsumer();
+            yield this.consumerMessage.fetchPassengersData();
         });
     }
 }

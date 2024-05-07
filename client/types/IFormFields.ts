@@ -15,7 +15,6 @@ export type UserCredentials = {
 //   password: string;
 // };
 
-
 type FormFields = {
   name: "username" | "email" | "password";
   label: string;
@@ -36,6 +35,6 @@ export type RegisterFormProps = {
   formFields: FormFields[];
   initialValues: InitialValues;
   type: "Register" | "Login";
-  setIsOtpAvail:Dispatch<SetStateAction<boolean>>
-  setEmail:Dispatch<SetStateAction<string | undefined>>
+  setIsOtpAvail: Dispatch<SetStateAction<boolean>>;
+  setEmail: Dispatch<SetStateAction<string | undefined>>;
 };

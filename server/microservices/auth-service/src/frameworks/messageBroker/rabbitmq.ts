@@ -78,7 +78,7 @@ export class RabbitMQService {
             const message = JSON.stringify(loginData);
             await channel?.assertQueue('response_queue', { durable: false });
             this.consumeResponseQueue();
-
+            
             const responsePromise = new Promise<any>((resolve) => {
                 this.correlationIdMap.set(correlationId, resolve);
             });

@@ -71,5 +71,20 @@ class UserController {
             }
         });
     }
+    getUser(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const userId = req.params.userId;
+                const response = yield this.userUsecase.getUser(userId);
+                if (response) {
+                    res.status(200).json({ updatedUser: response });
+                }
+            }
+            catch (error) {
+                res.status(500).send("Error while adding address");
+                console.log("Error while adding => ", error);
+            }
+        });
+    }
 }
 exports.UserController = UserController;

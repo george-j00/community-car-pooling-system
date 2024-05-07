@@ -54,25 +54,18 @@ export class UserController {
     }
   }
 
-  //   async add_address(req: Request, res: Response) {
-  //     try {
-  //         const {address , userId}  = req.body;
-  //         await this.userUsecase.addAddress(userId,address);
-  //         res.status(200).send('Address added successfully');
-  //     } catch (error) {
-  //         res.status(500).send('Error while adding address');
-  //         console.log('Error while adding => ', error);
-  //     }
-  // }
+  async getUser(req: Request, res: Response) {
+    try {
+      const userId = req.params.userId;
+      const response = await this.userUsecase.getUser(userId);
+      if (response) {
+        res.status(200).json({updatedUser: response});
+      }
+    } catch (error) {
+      res.status(500).send("Error while adding address");
+      console.log("Error while adding => ", error);
+    }
+  }
 
-  //   async delete_address(req: Request, res: Response) {
-  //     try {
-  //       const { userId } = req.body;
-  //       await this.userUsecase.deleteAddress(userId);
-  //       res.status(200).send('Address deleted successfully');
-  //     } catch (error) {
-  //       res.send("error");
-  //       console.log("Error while deleting => ", error);
-  //     }
-  //   }
+
 }

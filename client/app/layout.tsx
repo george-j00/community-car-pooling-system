@@ -4,7 +4,6 @@ import "./globals.css";
 import StoreProvider from "./StoreProvider";
 import { Toaster } from "@/components/ui/toaster"
 
-
 const inter = Poppins({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],

@@ -26,5 +26,11 @@ class UserUsecase {
     updateProfile(userId, data) {
         return this.userRepository.updateProfile(userId, data);
     }
+    getUser(userId) {
+        return this.userRepository.getUser(userId);
+    }
+    getPassengersData(passengersList) {
+        return this.userRepository.getPassengersData(passengersList);
+    }
 }
 exports.UserUsecase = UserUsecase;

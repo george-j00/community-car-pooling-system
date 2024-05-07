@@ -150,5 +150,38 @@ class UserRepository {
             }
         });
     }
+    getUser(userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const user = yield this.UserModel.findById(userId);
+                return user;
+            }
+            catch (error) {
+                console.error("Error while banning user:", error);
+                throw new Error("Error while banning user");
+            }
+        });
+    }
+    getPassengersData(passengersList) {
+        var _a;
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const userDataPromises = (_a = passengersList === null || passengersList === void 0 ? void 0 : passengersList.passengersList) === null || _a === void 0 ? void 0 : _a.map((passenger) => __awaiter(this, void 0, void 0, function* () {
+                    const user = yield user_model_1.UserModel.findById(passenger.userId);
+                    return {
+                        username: user === null || user === void 0 ? void 0 : user.username,
+                        phoneNumber: user === null || user === void 0 ? void 0 : user.phoneNumber
+                    };
+                }));
+                const passengersData = yield Promise.all(userDataPromises);
+                console.log('passengers datatat ', passengersData);
+                return passengersData;
+            }
+            catch (error) {
+                console.error("Error while fetching passengers data :", error);
+                throw new Error("Error fetching passengers data ");
+            }
+        });
+    }
 }
 exports.UserRepository = UserRepository;

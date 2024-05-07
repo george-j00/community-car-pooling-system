@@ -6,6 +6,10 @@ import bcrypt from "bcryptjs";
 import { JwtService } from "../../frameworks/jwt/jwt";
 import { UserModel } from "../../models/user.model";
 
+type passenger = {
+  userId:string
+}
+
 export class UserRepository implements IUserCase {
   private readonly UserModel: Model<IUserSchema>;
   private readonly Jwt: JwtService;
@@ -41,7 +45,6 @@ export class UserRepository implements IUserCase {
       throw new Error("Registration failed");
     }
   }
-
   async login(email: string, password: string): Promise<any> {
     try {
       const user = await this.UserModel.findOne({ email: email }).exec();
@@ -65,7 +68,6 @@ export class UserRepository implements IUserCase {
       throw new Error("Login failed");
     }
   }
-
   async add_car(userId: string, addCarDetails: UserEntity): Promise<void> {
     try {    
       UserModel.findByIdAndUpdate(userId, { $set: { car: addCarDetails } })
@@ -91,7 +93,6 @@ export class UserRepository implements IUserCase {
       throw new Error("Error while fetching all users");
     }
   }
-
   async banUser(userId : string) : Promise<any> {
     try {
       const banUser : IUserSchema | null = await this.UserModel.findById(userId);
@@ -106,7 +107,6 @@ export class UserRepository implements IUserCase {
       throw new Error("Error while banning user");
     }
   }
-
   async updateProfile(userId : string , data : any) : Promise<any> {
     try {
       const { carName, carType, carCapacity, carModel, vehicleNumber, fuelType , phone } = data;
@@ -138,6 +138,35 @@ export class UserRepository implements IUserCase {
     } catch (error) {
       console.error("Error while banning user:", error);
       throw new Error("Error while banning user");
+    }
+  }
+  async getUser(userId : string) : Promise<any> {
+    try {
+      const user = await this.UserModel.findById(userId)
+      return user
+    } catch (error) {
+      console.error("Error while banning user:", error);
+      throw new Error("Error while banning user");
+    }
+  }
+
+  async getPassengersData(passengersList:any) : Promise<any> {
+    try {
+
+      const userDataPromises = passengersList?.passengersList?.map(async (passenger : passenger) => {
+        const user = await UserModel.findById(passenger.userId);
+        return {
+            username: user?.username,
+            phoneNumber: user?.phoneNumber
+        };
+    });
+
+    const passengersData = await Promise.all(userDataPromises);
+    console.log('passengers datatat ',passengersData);
+    return passengersData;
+    } catch (error) {
+      console.error("Error while fetching passengers data :", error);
+      throw new Error("Error fetching passengers data ");
     }
   }
   
